@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>StarSpace - Avis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <video autoplay muted loop id="bgVideo">
+        <source src="bg.mp4" type="video/mp4">
+    </video>
+
+    <audio id="bgMusic" loop>
+        <source src="musique.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="musicBtn">🔊 Activer / Pause Musique</button>
+
+    <nav>
+        <h1>🌌 StarSpace</h1>
+        <ul>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="packs.html">Packs</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="avis.html">Avis</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="avis-section">
+        <div class="discord-frame">
+            <div class="discord-messages">
+                <div class="message" data-delay="0">
+                    <img class="avatar" src="avatar1.png" alt="avatar">
+                    <div class="bubble">
+                        <div class="meta"><span class="username">Anas</span><span class="tag">#1452</span><span class="time">— 2h</span></div>
+                        <div class="content">Merci pour le bot ! Super rapide, pro et à l’écoute. Je recommande à fond !</div>
+                    </div>
+                </div>
+                <div class="message" data-delay="300">
+                    <img class="avatar" src="avatar2.png" alt="avatar">
+                    <div class="bubble">
+                        <div class="meta"><span class="username">Yassine</span><span class="tag">#DEV</span><span class="time">— 1j</span></div>
+                        <div class="content">Le site est magnifique ! Très fluide et bien codé. Je suis choqué du résultat 🔥.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

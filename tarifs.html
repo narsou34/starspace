@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>StarSpace - Tarifs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>StarSpace - Mes Tarifs</h1>
+        <div class="tarifs-container">
+            <div class="tarif-card">
+                <h2>Site Web</h2>
+                <p>30 €</p>
+            </div>
+            <div class="tarif-card">
+                <h2>Bot Discord</h2>
+                <p>50 €</p>
+            </div>
+            <div class="tarif-card">
+                <h2>Autres services</h2>
+                <p>50 €</p>
+            </div>
+        </div>
+        <button onclick="location.href='/'">Retour à l'accueil</button>
+        <button onclick="location.href='/contact'">Me contacter</button>
+    </header>
+</body>
+</html>

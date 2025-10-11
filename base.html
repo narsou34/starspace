@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>StarSpace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script defer src="{{ url_for('static', filename='js/particles.js') }}"></script>
+</head>
+<body>
+    <video autoplay muted loop id="bgVideo">
+        <source src="{{ url_for('static', filename='media/bg.mp4') }}" type="video/mp4">
+    </video>
+
+    <!-- Particules -->
+    <canvas id="particles"></canvas>
+
+    <!-- Musique continue -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="{{ url_for('static', filename='media/Artemas - i like the way you kiss me (official music video).mp3') }}" type="audio/mpeg">
+    </audio>
+
+    <nav>
+        <h1>🌌 StarSpace</h1>
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/packs">Packs</a></li>
+            <li><a href="/portfolio">Portfolio</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Empêche le redémarrage de la musique
+        const links = document.querySelectorAll("nav a");
+        links.forEach(link => {
+            link.addEventListener("click", e => {
+                e.preventDefault();
+                fetch(link.href)
+                    .then(res => res.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+                        document.querySelector("main").innerHTML = doc.querySelector("main").innerHTML;
+                        history.pushState(null, "", link.href);
+                        window.scrollTo(0, 0);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
