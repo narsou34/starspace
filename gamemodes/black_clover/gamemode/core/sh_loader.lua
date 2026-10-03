@@ -33,7 +33,8 @@ Loader.CoreFiles = {
     "core/sh_permissions.lua",  -- staff / permissions
     "core/sh_network.lua",      -- net sécurisé + anti-flood
     "core/sh_notify.lua",       -- notifications serveur → client
-    "core/sv_database.lua",     -- abstraction base de données (Phase 3)
+    "core/sv_database.lua",     -- abstraction base de données SQLite / MySQL
+    "core/sv_commands.lua",     -- commandes chat (/bc_...) et console
     "core/sv_player.lua",       -- cycle de vie du joueur côté serveur
     "core/cl_player.lua",       -- cycle de vie du joueur côté client
 }

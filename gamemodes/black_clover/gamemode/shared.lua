@@ -15,7 +15,7 @@ GM.Name    = "Black Clover RP"
 GM.Author  = "NARSOU"
 GM.Email   = ""
 GM.Website = ""
-GM.Version = "0.1.0"
+GM.Version = "0.2.0"
 
 DeriveGamemode("sandbox")
 

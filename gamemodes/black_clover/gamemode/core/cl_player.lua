@@ -4,6 +4,7 @@
 
     Cycle de vie du joueur côté client :
         - signale au serveur que le client est prêt ;
+        - ouvre les menus demandés par le serveur (touches F1 / F3) ;
         - cache les menus sandbox (Q / C) aux joueurs non staff.
 
     Note : cacher les menus côté client n'est que du confort.
@@ -13,6 +14,8 @@
 local Config = BlackClover.Config
 local Permissions = BlackClover.Permissions
 
+BlackClover.Menus = BlackClover.Menus or {}
+
 -- ─── Joueur prêt ────────────────────────────────────────────────────────
 -- InitPostEntity est appelé quand le client a fini de charger le monde :
 -- à partir de là, il peut recevoir des net messages sans risque.
@@ -21,6 +24,16 @@ hook.Add("InitPostEntity", "BlackClover.Player.Ready", function()
     net.SendToServer()
 
     hook.Run("BlackClover.LocalPlayerReady", LocalPlayer())
+end)
+
+-- ─── Menus ──────────────────────────────────────────────────────────────
+-- Les interfaces s'enregistrent avec : BlackClover.Menus["grimoire"] = function() ... end
+
+BlackClover.Net.Receive("BlackClover.UI.Open", function()
+    local menu = net.ReadString()
+    local open = BlackClover.Menus[menu]
+
+    if open then open() end
 end)
 
 -- ─── Menus sandbox ──────────────────────────────────────────────────────

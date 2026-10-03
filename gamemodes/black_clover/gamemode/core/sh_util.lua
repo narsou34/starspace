@@ -210,3 +210,60 @@ function Util.FindPlayer(query)
 
     return nil, "Aucun joueur trouvé pour \"" .. query .. "\"."
 end
+
+-- ─── Texte / JSON ───────────────────────────────────────────────────────
+
+--- Découpe une chaîne d'arguments en respectant les guillemets.
+-- 'Yuno "Grinberryall Arc" 5' → { "Yuno", "Grinberryall Arc", "5" }
+function Util.ParseArgs(str)
+    local args = {}
+    str = tostring(str or "")
+
+    local i, len = 1, #str
+    while i <= len do
+        local c = string.sub(str, i, i)
+
+        if c == "\"" then
+            local closing = string.find(str, "\"", i + 1, true)
+            local value = string.sub(str, i + 1, (closing or (len + 1)) - 1)
+            args[#args + 1] = value
+            i = (closing or len) + 1
+        elseif c ~= " " then
+            local nextSpace = string.find(str, " ", i, true)
+            args[#args + 1] = string.sub(str, i, (nextSpace or (len + 1)) - 1)
+            i = (nextSpace or len) + 1
+        else
+            i = i + 1
+        end
+    end
+
+    return args
+end
+
+--- JSON → table, avec valeur par défaut si la chaîne est invalide.
+function Util.FromJSON(str, default)
+    if not isstring(str) or str == "" then return default end
+
+    local ok, result = pcall(util.JSONToTable, str)
+    if ok and istable(result) then return result end
+
+    return default
+end
+
+--- table → JSON (renvoie "[]" ou "{}" en cas d'échec).
+function Util.ToJSON(tbl, isArray)
+    local ok, result = pcall(util.TableToJSON, tbl or {})
+    if ok and isstring(result) then return result end
+
+    return isArray and "[]" or "{}"
+end
+
+--- Couleur → Vector (pour EffectData / NetworkVar).
+function Util.ColorToVector(col)
+    return Vector(col.r / 255, col.g / 255, col.b / 255)
+end
+
+--- Vector → Color
+function Util.VectorToColor(vec, alpha)
+    return Color(vec.x * 255, vec.y * 255, vec.z * 255, alpha or 255)
+end

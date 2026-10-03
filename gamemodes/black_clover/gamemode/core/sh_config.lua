@@ -27,19 +27,20 @@ Config.ServerName = "Black Clover RP"
 -- Un système dépendant d'un autre doit être placé APRÈS lui.
 -- Commentez une ligne pour désactiver un système.
 Config.Systems = {
-    "character",    -- Phase 2  : personnages
-    "progression",  -- Phase 8  : niveau, XP, statistiques
-    "mana",         -- Phase 4  : mana
-    "magic",        -- Phase 5  : types de magie
-    "grimoire",     -- Phase 6  : grimoires
-    "spells",       -- Phase 7  : sorts
-    "factions",     -- Phase 9  : factions
-    "ranks",        -- Phase 10 : rangs
-    "inventory",    -- Phase 11 : inventaire
-    "quests",       -- Phase 12 : quêtes
-    "economy",      -- Phase 13 : économie
-    "effects",      -- Phase 16 : effets et animations
-    "admin",        -- Phase 17 : administration
+    "character",    -- personnages (création, sélection, sauvegarde)
+    "progression",  -- niveau, XP, statistiques
+    "status",       -- buffs / debuffs (vitesse, dégâts, mana…)
+    "mana",         -- mana
+    "magic",        -- types de magie
+    "grimoire",     -- grimoires + cérémonie
+    "effects",      -- effets visuels et sons
+    "spells",       -- sorts (lancement, cooldowns, dégâts)
+    "factions",     -- (à venir) factions
+    "ranks",        -- (à venir) rangs
+    "inventory",    -- (à venir) inventaire
+    "quests",       -- (à venir) quêtes
+    "economy",      -- (à venir) économie
+    "admin",        -- commandes staff
 }
 
 -- ─── Staff ──────────────────────────────────────────────────────────────
@@ -89,12 +90,59 @@ Config.Net = {
     KickOnFlood           = false,-- expulser un joueur qui dépasse 2x la limite
 }
 
--- ─── Personnage (utilisé en Phase 2) ────────────────────────────────────
+-- ─── Personnage ─────────────────────────────────────────────────────────
 Config.Character = {
     MaxCharacters  = 3,
     NameMinLength  = 2,
     NameMaxLength  = 24,
     AgeMin         = 15,
     AgeMax         = 90,
+    PersonalityMinLength = 3,
+    PersonalityMaxLength = 120,
+    StoryMinLength = 0,
     StoryMaxLength = 3000,
+
+    -- Recharge automatiquement le dernier personnage joué à la connexion
+    AutoLoadLast = true,
+
+    -- Argent de départ (affiché dans le HUD, économie complète à venir)
+    StartMoney = 500,
+    CurrencyName = "Yul",
+
+    Sexes = { "Homme", "Femme" },
+
+    -- Apparences autorisées par sexe (le serveur refuse tout autre modèle)
+    Models = {
+        ["Homme"] = {
+            "models/player/Group01/male_01.mdl",
+            "models/player/Group01/male_02.mdl",
+            "models/player/Group01/male_03.mdl",
+            "models/player/Group01/male_04.mdl",
+            "models/player/Group01/male_05.mdl",
+            "models/player/Group01/male_06.mdl",
+            "models/player/Group01/male_07.mdl",
+            "models/player/Group01/male_08.mdl",
+            "models/player/Group01/male_09.mdl",
+            "models/player/Group02/male_02.mdl",
+            "models/player/Group02/male_04.mdl",
+            "models/player/Group02/male_06.mdl",
+            "models/player/Group02/male_08.mdl",
+        },
+        ["Femme"] = {
+            "models/player/Group01/female_01.mdl",
+            "models/player/Group01/female_02.mdl",
+            "models/player/Group01/female_03.mdl",
+            "models/player/Group01/female_04.mdl",
+            "models/player/Group01/female_05.mdl",
+            "models/player/Group01/female_06.mdl",
+        },
+    },
+
+    Origins = {
+        "Famille royale",
+        "Noblesse",
+        "Roturier",
+        "Village frontalier",
+        "Étranger",
+    },
 }

@@ -2,10 +2,18 @@
     Black Clover RP — config/sh_factions.lua
     Realm : PARTAGÉ
 
-    Royaumes, ordres des Chevaliers-Mages et autres factions.
-    ► Contenu ajouté en PHASE 9.
-
-    Ce fichier ne contiendra QUE des données : la logique est dans systems/.
+    Royaumes (choisis à la création du personnage).
+    Les factions complètes (ordres des Chevaliers-Mages, chefs, salaires,
+    permissions…) seront ajoutées dans ce fichier lors de l'étape Factions.
 ]]
 
-BlackClover.Config.Factions = BlackClover.Config.Factions or {}
+local Config = BlackClover.Config
+
+Config.Kingdoms = {
+    clover  = { Name = "Royaume de Clover",  Color = Color(46, 160, 87),  Order = 1 },
+    diamond = { Name = "Royaume de Diamond", Color = Color(90, 170, 255), Order = 2 },
+    heart   = { Name = "Royaume de Heart",   Color = Color(230, 90, 130), Order = 3 },
+    spade   = { Name = "Royaume de Spade",   Color = Color(120, 80, 160), Order = 4 },
+}
+
+Config.Factions = Config.Factions or {}
