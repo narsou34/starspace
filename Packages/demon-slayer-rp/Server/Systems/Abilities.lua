@@ -214,7 +214,7 @@ local function execute(session, caster, tech, now)
     end
 
     DS.Net.BroadcastInRadius(origin, FX_RADIUS, "SkillFx", caster, tech.Kind, tech.SetId, tech.Slot, #hits)
-    Log:Debug("%s (#%s) : %s - %s cible(s)", session.name, session.id, tech.Name, #hits)
+    Log:Info("%s (#%s) utilise %s - %s cible(s) touchee(s)", session.name, session.id, tech.Name, #hits)
     DS.Bus.Emit("Abilities:Used", session, tech, #hits)
     return #hits
 end
@@ -223,37 +223,55 @@ end
 -- Requête du client
 -- ===========================================================================
 
-local function onUseSkill(session, slot)
+-- Refus expliqué au joueur et dans la console (diagnostic)
+local function refuse(session, slot, reason, notify)
+    Log:Info("Technique %s refusee pour %s (#%s) : %s", slot, session.name, session.id, reason)
+    if notify then session:Notify(reason, "warning", 3) end
+    return false, reason
+end
+
+--- Tente d'utiliser la technique de l'emplacement `slot`. Retourne true ou false, raison.
+function Abilities.Use(session, slot)
     local state = DS.Factions.State(session)
     if not state.faction then
-        return session:Notify("Vous n'avez pas encore de faction.", "warning", 3)
+        return refuse(session, slot, "Vous n'avez pas encore de faction.", true)
     end
     if not state.setId then
-        return session:Notify("Aucun " .. DS.Catalog.KindLabel(state.kind):lower() .. " attribue.", "warning", 3)
+        return refuse(session, slot, "Aucun " .. DS.Catalog.KindLabel(state.kind):lower() .. " attribue.", true)
     end
 
     local tech = DS.Catalog.GetTechnique(state.kind, state.setId, slot)
-    if not tech then return end
+    if not tech then return refuse(session, slot, "aucune technique a cet emplacement", false) end
 
     local caster = session:GetCharacter()
-    if not (caster and caster:IsValid()) or caster:IsDead() then return end
+    if not (caster and caster:IsValid()) then
+        return refuse(session, slot, "Vous n'avez pas de personnage.", true)
+    end
+    if caster:IsDead() then return refuse(session, slot, "personnage mort", false) end
 
     local now = Utils.NowMs()
     local cooldowns = session.data.cooldowns or {}
     session.data.cooldowns = cooldowns
-    -- Cooldown actif : on ignore sans sanction (peut arriver avec du lag)
-    if (cooldowns.global or 0) > now or (cooldowns[slot] or 0) > now then return end
+    -- Cooldown actif : refus sans sanction (peut arriver avec du lag)
+    if (cooldowns.global or 0) > now or (cooldowns[slot] or 0) > now then
+        return refuse(session, slot, "recharge en cours", false)
+    end
 
     if not DS.Resources.TrySpend(session, tech.Cost) then
         local faction = DS.Catalog.GetFaction(state.faction)
-        return session:Notify("Pas assez de " .. Config.Resources[faction.Resource].Label:lower() .. ".", "warning", 2)
+        return refuse(session, slot, "Pas assez de " .. Config.Resources[faction.Resource].Label:lower() .. ".", true)
     end
 
     cooldowns.global = now + Config.Abilities.GlobalCooldownMs
     cooldowns[slot] = now + tech.CooldownMs
     session:Send("SkillCooldown", slot, tech.CooldownMs)
 
-    execute(session, caster, tech, now)
+    local hits = execute(session, caster, tech, now)
+    return true, hits
+end
+
+local function onUseSkill(session, slot)
+    Abilities.Use(session, slot)
 end
 
 -- ===========================================================================

@@ -49,6 +49,7 @@ Config.Permissions = {
                 "admin.givedemonart",
                 "admin.heal",
                 "admin.npc",
+                "admin.cast",
             },
         },
         superadmin = {

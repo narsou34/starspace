@@ -45,13 +45,34 @@ local function changed()
     DS.Bus.Emit("Abilities:Changed", state)
 end
 
+-- Message dans le chat local, au plus une fois par seconde
+local lastFeedback = 0
+local function feedback(message)
+    local now = DS.Utils.NowMs()
+    if now - lastFeedback < 1000 then return end
+    lastFeedback = now
+    Chat.AddMessage(Config.Core.ChatPrefix .. " " .. message)
+    Log:Info("%s", message)
+end
+
 local function tryUse(slot)
-    if not DS.Session.IsReady() then return end
+    Log:Debug("Touche de la technique %s pressee", slot)
+    if not DS.Session.IsReady() then
+        return feedback("Connexion au gamemode pas encore etablie (handshake).")
+    end
     local set = Abilities.GetSet()
-    if not set or not set.Techniques[slot] then return end
+    if not set then
+        if state.faction == "" then
+            return feedback("Pas de faction : /ds_setfaction moi pourfendeur")
+        end
+        return feedback("Pas encore de souffle / d'art demoniaque attribue.")
+    end
+    if not set.Techniques[slot] then return end
     -- Le serveur vérifie aussi : ceci évite seulement d'envoyer des requêtes inutiles
     if Abilities.GetRemaining(slot) > 0 then return end
-    DS.Net.Send("UseSkill", slot)
+    if DS.Net.Send("UseSkill", slot) then
+        Log:Info("Technique %s demandee au serveur", slot)
+    end
 end
 
 function Abilities:Init()

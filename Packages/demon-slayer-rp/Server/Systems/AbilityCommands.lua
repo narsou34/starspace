@@ -160,13 +160,42 @@ function AbilityCommands:Init()
 
     Commands.Register({
         name = "ds_npc",
-        description = "Fait apparaitre un mannequin d'entrainement devant vous",
+        description = "Fait apparaitre un mannequin d'entrainement devant un joueur",
+        usage = "[id|nom|moi]",
         permission = "admin.npc",
-        console = false,
-        handler = function(ctx)
-            local dummy, err = DS.Abilities.SpawnDummy(ctx.session)
-            if not dummy then return ctx.Error(err) end
-            ctx.Reply("Mannequin pret (" .. Config.Abilities.TrainingDummyHealth .. " PV). /ds_clearnpc pour les retirer.")
+        params = { "joueur" },
+        handler = function(ctx, args)
+            local target, err = ctx.session, nil
+            if args[1] or ctx.isConsole then
+                target, err = findTarget(ctx, args[1])
+                if not target then return ctx.Error(err or "Utilisation : ds_npc [id]") end
+            end
+            local dummy, spawnErr = DS.Abilities.SpawnDummy(target)
+            if not dummy then return ctx.Error(spawnErr) end
+            ctx.Reply("Mannequin pret devant " .. target.name .. " (" .. Config.Abilities.TrainingDummyHealth .. " PV).")
+        end,
+    })
+
+    Commands.Register({
+        name = "ds_cast",
+        description = "Declenche une technique d'un joueur (test sans clavier)",
+        usage = "[id|nom|moi] [1-5]",
+        permission = "admin.cast",
+        minArgs = 2,
+        params = { "joueur", "emplacement" },
+        handler = function(ctx, args)
+            local target, err = findTarget(ctx, args[1])
+            if not target then return ctx.Error(err) end
+            local slot = math.tointeger(tonumber(args[2]))
+            if not slot or slot < 1 or slot > DS.Catalog.Slots then
+                return ctx.Error("Emplacement entre 1 et " .. DS.Catalog.Slots)
+            end
+            local ok, result = DS.Abilities.Use(target, slot)
+            if ok then
+                ctx.Reply("Technique " .. slot .. " lancee : " .. result .. " cible(s) touchee(s).")
+            else
+                ctx.Error("Refusee : " .. tostring(result))
+            end
         end,
     })
 
