@@ -1,0 +1,11 @@
+"black_clover"
+{
+	"base"			"sandbox"
+	"title"			"Black Clover RP"
+	"author"		"NARSOU"
+	"version"		"0.1.0"
+	"maps"			"^bc_"
+	"category"		"rp"
+	"menusystem"	"1"
+	"workshopid"	""
+}
