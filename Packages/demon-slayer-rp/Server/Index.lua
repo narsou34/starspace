@@ -50,8 +50,11 @@ local MODULE_FILES = {
     "Core/Commands.lua",
     "Core/BaseCommands.lua",
 
-    -- Systèmes (ajoutés phase après phase)
-    -- "Systems/Character/Index.lua",
+    -- Systèmes de jeu
+    "Systems/Factions.lua",
+    "Systems/Resources.lua",
+    "Systems/Abilities.lua",
+    "Systems/AbilityCommands.lua",
 }
 
 local filesFailed = 0

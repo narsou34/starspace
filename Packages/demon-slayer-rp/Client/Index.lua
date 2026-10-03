@@ -20,7 +20,12 @@ local MODULE_FILES = {
     "Core/Session.lua",
     "Core/Diagnostics.lua",
 
-    -- Interfaces, effets, sons, caméra... (phases suivantes)
+    -- Systèmes de jeu
+    "Systems/Abilities.lua",
+    "Systems/Effects.lua",
+
+    -- Interfaces
+    "UI/Hud.lua",
 }
 
 local filesFailed = 0

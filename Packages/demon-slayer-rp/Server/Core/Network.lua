@@ -20,6 +20,7 @@
         DS.Net.Send(session_ou_player, "Notify", "Bonjour", "info")
         DS.Net.SendMany({ s1, s2 }, "Notify", ...)
         DS.Net.Broadcast("Notify", ...)          -- tous les joueurs connectés
+        DS.Net.BroadcastInRadius(location, 5000, "SkillFx", ...)  -- joueurs proches
         DS.Net.BroadcastLoaded("Notify", ...)    -- uniquement les joueurs chargés
 ]]
 
@@ -159,6 +160,13 @@ function Network.Broadcast(name, ...)
     local def = DS.NetEvents.Get("S2C", name)
     Events.BroadcastRemote(def.wire, reliabilityOf(def), ...)
     stats.sent = stats.sent + DS.Players.Count()
+end
+
+--- Envoie un évènement aux joueurs proches d'une position (filtrage fait par le moteur).
+function Network.BroadcastInRadius(location, radius, name, ...)
+    local def = DS.NetEvents.Get("S2C", name)
+    Events.BroadcastRemoteInRadius(def.wire, location, radius, reliabilityOf(def), ...)
+    stats.sent = stats.sent + 1
 end
 
 --- Envoie un évènement uniquement aux joueurs ayant entièrement chargé le gamemode.

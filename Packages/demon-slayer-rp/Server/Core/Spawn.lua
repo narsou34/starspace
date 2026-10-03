@@ -4,6 +4,8 @@
     Donne un personnage aux joueurs pour pouvoir tester le gamemode dès la
     Phase 1. Sera remplacé par la création / sélection de personnage
     (Phase 4) : il suffira alors de passer Config.Spawn.Enabled à false.
+
+    Évènement interne émis : "Spawn:CharacterReady" (session, character, "spawn" | "respawn")
 ]]
 
 local Spawn = DS.Module("Spawn", { dependencies = { "PlayerManager" } })
@@ -37,6 +39,7 @@ function Spawn.SpawnFor(session)
     session.data.spawnCharacter = character
 
     Log:Debug("Personnage cree pour %s (#%s)", session.name, session.id)
+    DS.Bus.Emit("Spawn:CharacterReady", session, character, "spawn")
     return character
 end
 
@@ -64,6 +67,9 @@ local function onCharacterDeath(character)
         if not character:IsValid() then return end
         local location, rotation = pickSpawnPoint()
         character:Respawn(location, rotation)
+        if session:IsValid() then
+            DS.Bus.Emit("Spawn:CharacterReady", session, character, "respawn")
+        end
     end, cfg.RespawnDelayMs)
     -- Le timer est annulé automatiquement si le personnage est détruit (déconnexion)
     Timer.Bind(timer, character)

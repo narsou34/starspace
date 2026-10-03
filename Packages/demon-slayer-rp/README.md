@@ -3,7 +3,7 @@
 | | |
 | --- | --- |
 | **Auteur** | NARSOU |
-| **Version** | 0.1.0 (Phase 1 : architecture + Core) |
+| **Version** | 0.1.0 (Core + souffles / arts démoniaques) |
 | **Type de package** | `game-mode` |
 | **Compatibilité** | nanos world `1.144` et plus (`compatibility_version` du Package.toml) |
 | **Dépendances** | aucune : tout est développé de zéro |
@@ -144,6 +144,31 @@ Les mêmes commandes, sans `/` et avec tous les droits : `ds_info`, `ds_players`
    ```
 
 3. Console serveur : `package reload demon-slayer-rp`.
+
+## Souffles et arts démoniaques
+
+- **13 souffles** (`Shared/Config/BreathingStyles.lua`) : eau, flamme, tonnerre, vent, pierre,
+  brume, amour, serpent, insecte, fleur, son, bête, soleil — 5 techniques chacun.
+- **6 arts démoniaques** (`Shared/Config/DemonArts.lua`) : sang, temari, fils, glace, biwa, rêve —
+  5 compétences + un passif chacun.
+- Touches par défaut **Q E R F X** (la 5e = technique spéciale), modifiables dans
+  *Paramètres > Touches* ; liste dans `Shared/Config/Abilities.lua`.
+- Ressources : Souffle (pourfendeurs) / Énergie démoniaque (démons), `Config.Resources`.
+- Régénération des démons (`Config.Factions.demons.Regeneration`), bloquée après un coup
+  et plus longtemps après une technique de souffle (`BlockRegenMs`, très long pour Soleil / Insecte).
+- Serveur autoritaire : le client n'envoie que l'emplacement (1-5) ; cibles, dégâts, coûts
+  et recharges sont calculés par le serveur. Effets visuels/sons séparés (`Client/Systems/Effects.lua`).
+
+| Commande | Permission | Description |
+| --- | --- | --- |
+| `/ds_setfaction [joueur\|moi] [pourfendeur\|demon\|aucune]` | `admin.setfaction` | Change la faction |
+| `/ds_givebreathing [joueur\|moi] [souffle]` | `admin.givebreathing` | Donne un souffle |
+| `/ds_givedemonart [joueur\|moi] [art]` | `admin.givedemonart` | Donne un art démoniaque |
+| `/ds_souffles`, `/ds_arts`, `/ds_skills` | `core.skills` | Listes et vos techniques |
+| `/ds_heal [joueur\|moi]` | `admin.heal` | Soin + ressource pleine |
+| `/ds_npc`, `/ds_clearnpc` | `admin.npc` | Mannequins d'entraînement |
+
+Faction et souffle/art ne sont pas encore sauvegardés (base de données : Phase 5).
 
 ## Ajouter un module (exemple)
 

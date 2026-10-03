@@ -17,3 +17,11 @@ Package.Require("Core/Validator.lua")
 Package.Require("Core/NetEvents.lua")
 
 Package.Require("Config/Core.lua")
+Package.Require("Config/Factions.lua")
+Package.Require("Config/Abilities.lua")
+Package.Require("Config/BreathingStyles.lua")
+Package.Require("Config/DemonArts.lua")
+
+-- Systèmes partagés (catalogue construit et vérifié au chargement)
+Package.Require("Systems/Catalog.lua")
+Package.Require("Systems/AbilityNet.lua")

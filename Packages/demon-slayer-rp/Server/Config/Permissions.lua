@@ -25,6 +25,7 @@ Config.Permissions = {
                 "core.help",
                 "core.info",
                 "core.whoami",
+                "core.skills",
             },
         },
         moderator = {
@@ -43,6 +44,11 @@ Config.Permissions = {
                 "admin.modules",
                 "admin.netstats",
                 "admin.setgroup",
+                "admin.setfaction",
+                "admin.givebreathing",
+                "admin.givedemonart",
+                "admin.heal",
+                "admin.npc",
             },
         },
         superadmin = {
