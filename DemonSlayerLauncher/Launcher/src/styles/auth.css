@@ -1,0 +1,243 @@
+/* ═══ Écran de connexion ═════════════════════════════════ */
+.auth {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(420px, 470px) 1fr;
+}
+
+.auth__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 40px 18px;
+  background: linear-gradient(180deg, rgba(8, 9, 15, 0.86), rgba(8, 9, 15, 0.74));
+  backdrop-filter: blur(18px);
+  border-right: 1px solid var(--line);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  animation: panel-in 0.7s var(--ease) both;
+}
+
+/* Fil cramoisi le long du panneau */
+.auth__panel::after {
+  content: '';
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  right: -1px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--crimson-hi), transparent);
+  opacity: 0.7;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.auth__brand svg {
+  filter: drop-shadow(0 0 18px rgba(196, 22, 42, 0.5));
+}
+
+.auth__brand h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  line-height: 1.15;
+}
+
+.auth__brand h1 em {
+  font-style: normal;
+  color: var(--crimson-hi);
+}
+
+.auth__brand p {
+  font-size: 10.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.auth__welcome {
+  margin: 26px 0 18px;
+}
+
+.auth__welcome h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+}
+
+.auth__welcome p {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ── Onglets ── */
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+
+.tabs button {
+  height: 40px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--faint);
+  transition: color 0.2s;
+}
+
+.tabs button:hover:not(:disabled),
+.tabs button.is-active {
+  color: var(--text);
+}
+
+/* Trait de pinceau qui glisse sous l'onglet actif */
+.tabs__ink {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--crimson-hi) 30%, var(--crimson) 80%, transparent);
+  transition: transform 0.4s var(--ease);
+}
+
+.tabs__ink--register {
+  transform: translateX(100%);
+}
+
+.auth__form {
+  animation: rise 0.4s var(--ease);
+}
+
+.auth__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 22px;
+}
+
+.auth__links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.auth__step {
+  display: flex;
+  gap: 12px;
+  color: var(--text-soft);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.auth__step span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--crimson-hi);
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 16px;
+  color: var(--faint);
+  font-size: 10.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.social {
+  display: flex;
+  gap: 10px;
+}
+
+.auth__footer {
+  margin-top: auto;
+  padding-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: 0.1em;
+}
+
+/* ── Côté illustration ── */
+.auth__art {
+  position: relative;
+}
+
+.auth__vertical {
+  position: absolute;
+  top: 44px;
+  left: 52px;
+  font-size: 46px;
+  gap: 14px;
+  color: rgba(239, 51, 73, 0.78);
+  text-shadow: 0 0 30px rgba(196, 22, 42, 0.55);
+  animation: rise 1.4s var(--ease) 0.3s both;
+}
+
+.auth__vertical::after {
+  content: '';
+  width: 1px;
+  height: 70px;
+  margin: 6px auto 0;
+  background: linear-gradient(180deg, rgba(239, 51, 73, 0.7), transparent);
+}
+
+.auth__quote {
+  position: absolute;
+  left: 48px;
+  bottom: 40px;
+  max-width: 300px;
+  animation: rise 1.4s var(--ease) 0.5s both;
+}
+
+.auth__quote span {
+  font-family: var(--font-jp);
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+}
+
+.auth__quote p {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin-top: 8px;
+  border-left: 1px solid var(--crimson);
+  padding-left: 14px;
+}

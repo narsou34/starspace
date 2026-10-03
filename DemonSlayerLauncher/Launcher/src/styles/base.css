@@ -1,0 +1,271 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--ink-0);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+::selection {
+  background: rgba(196, 22, 42, 0.55);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(236, 230, 220, 0.12);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+
+.app__body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  z-index: 1;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 40px;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+/* ── Barre de titre ─────────────────────────────────────── */
+.titlebar {
+  position: relative;
+  z-index: 10;
+  height: var(--titlebar-h);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+  background: linear-gradient(180deg, rgba(5, 5, 8, 0.85), rgba(5, 5, 8, 0.35));
+  border-bottom: 1px solid var(--line);
+}
+
+.titlebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--text-soft);
+}
+
+.titlebar__kanji {
+  font-family: var(--font-jp);
+  color: var(--crimson-hi);
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+}
+
+.titlebar__controls {
+  display: flex;
+  height: 100%;
+}
+
+.titlebar__controls button {
+  width: 46px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.titlebar__controls svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
+.titlebar__controls button:hover {
+  background: rgba(236, 230, 220, 0.07);
+  color: var(--text);
+}
+
+.titlebar__controls .titlebar__close:hover {
+  background: var(--crimson);
+  color: #fff;
+}
+
+/* ── Démarrage ──────────────────────────────────────────── */
+.boot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.boot__emblem {
+  filter: drop-shadow(0 0 30px rgba(196, 22, 42, 0.55));
+  animation: breathe 2.6s var(--ease) infinite;
+}
+
+.boot__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 0.4em;
+  margin-top: 12px;
+}
+
+.boot__message {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.boot__bar {
+  width: 220px;
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.boot__bar span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--crimson-hi), transparent);
+  animation: sweep 1.3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Kanji empilés (voir VerticalKanji.tsx) */
+.vkanji {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-jp);
+  font-weight: 700;
+  line-height: 1;
+}

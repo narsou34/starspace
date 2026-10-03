@@ -1,0 +1,93 @@
+name: Demon Slayer RP — Launcher & API
+
+on:
+  push:
+    paths:
+      - 'DemonSlayerLauncher/**'
+      - '.github/workflows/demon-slayer-launcher.yml'
+  pull_request:
+    paths:
+      - 'DemonSlayerLauncher/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: API — typecheck & tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DemonSlayerLauncher/Backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: dsrp
+          POSTGRES_PASSWORD: dsrp_ci_pw
+          POSTGRES_DB: dsrp_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U dsrp"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://dsrp:dsrp_ci_pw@127.0.0.1:5432/dsrp_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: DemonSlayerLauncher/Backend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  launcher-windows:
+    name: Launcher — build Windows (.exe + installateur)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: DemonSlayerLauncher/Launcher
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: DemonSlayerLauncher/Launcher/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: DemonSlayerLauncher/Launcher/src-tauri
+
+      - run: npm ci
+      # Typecheck + build de l'interface (requis par generate_context! côté Rust)
+      - run: npm run build
+      - name: Tests Rust
+        working-directory: DemonSlayerLauncher/Launcher/src-tauri
+        run: cargo test
+
+      # L'adresse de l'API de production vient d'une variable du dépôt
+      # (Settings → Secrets and variables → Actions → Variables → DSRP_API_URL),
+      # jamais du code source.
+      - name: Configuration de l'API
+        if: ${{ vars.DSRP_API_URL != '' }}
+        shell: pwsh
+        env:
+          DSRP_API_URL: ${{ vars.DSRP_API_URL }}
+        run: |
+          @{ apiBaseUrl = $env:DSRP_API_URL; requestTimeoutSeconds = 15 } |
+            ConvertTo-Json | Set-Content -Encoding utf8 src-tauri/resources/launcher.config.json
+
+      - run: npx tauri build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DemonSlayerRP-Windows
+          path: |
+            DemonSlayerLauncher/Launcher/src-tauri/target/release/bundle/nsis/*.exe
+            DemonSlayerLauncher/Launcher/src-tauri/target/release/Demon Slayer RP.exe
+          if-no-files-found: error

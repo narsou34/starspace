@@ -1,0 +1,36 @@
+# Environnement local : PostgreSQL + API.
+#   cp Backend/.env.example Backend/.env   (puis renseigner JWT_SECRET et POSTGRES_PASSWORD)
+#   docker compose up -d
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dsrp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Définissez POSTGRES_PASSWORD}
+      POSTGRES_DB: dsrp
+    volumes:
+      - dsrp-db:/var/lib/postgresql/data
+    ports:
+      - '127.0.0.1:5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dsrp']
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./Backend
+    restart: unless-stopped
+    env_file: ./Backend/.env
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://dsrp:${POSTGRES_PASSWORD}@db:5432/dsrp
+      AUTO_MIGRATE: 'true'
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:8080:8080'
+
+volumes:
+  dsrp-db:

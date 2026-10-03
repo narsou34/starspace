@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════════════════════════
+   Demon Slayer RP — design tokens
+   Noir d'encre · cramoisi · bleu nuit · or des yeux de démon
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: dark;
+
+  --ink-0: #050508;
+  --ink-1: #0a0b12;
+  --ink-2: #10121d;
+  --ink-3: #171a29;
+  --night: #121a36;
+  --night-2: #1d2a5a;
+
+  --crimson: #c4162a;
+  --crimson-hi: #ef3349;
+  --crimson-deep: #5e0812;
+  --ember: #ff7a45;
+  --gold: #d9b26a;
+  --gold-hi: #f2d79b;
+
+  --text: #ece6dc;
+  --text-soft: #c9c3ba;
+  --muted: #9893a3;
+  --faint: #5f5c6e;
+  --line: rgba(236, 230, 220, 0.08);
+  --line-strong: rgba(236, 230, 220, 0.16);
+  --glass: rgba(10, 11, 18, 0.66);
+  --glass-strong: rgba(8, 9, 15, 0.82);
+
+  --ok: #4fd18b;
+  --warn: #e8b04a;
+  --danger: #ff5a6a;
+
+  --font-display: 'Shippori Mincho B1', 'Yu Mincho', 'YuMincho', 'MS Mincho', serif;
+  --font-body: 'Zen Kaku Gothic New', 'Segoe UI', 'Yu Gothic UI', system-ui, sans-serif;
+  --font-jp: 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', 'MS Mincho', 'Shippori Mincho B1', serif;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --titlebar-h: 34px;
+  --sidebar-w: 240px;
+}
