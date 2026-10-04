@@ -59,4 +59,77 @@ function TMath.DragonAt(p, dragon)
     return forward, side, up
 end
 
+--[[
+    Fouet / trajectoire sinueuse : position d'une "tête" pour p (0..1).
+      whip.Path : "straight" | "sine" | "spiral"
+      whip.Return = true : aller-retour (le fouet revient vers le lanceur)
+      head = 1 ou 2 : la 2e tête est symétrique (Reptile à deux têtes)
+]]
+function TMath.WhipAt(p, whip, head)
+    p = TMath.Clamp01(p)
+    local reach = p
+    if whip.Return then reach = p < 0.5 and p * 2 or (1 - p) * 2 end
+    local mirror = (head == 2) and -1 or 1
+    local up = whip.Height or 80
+    if whip.Path == "spiral" then
+        -- Spirale autour du lanceur : le rayon grandit, l'angle tourne
+        local angle = p * (whip.Turns or 1.5) * 2 * math.pi * mirror
+        local radius = TMath.Lerp(whip.StartRadius or 120, whip.Distance, p)
+        return math.cos(angle) * radius, math.sin(angle) * radius, up
+    end
+    local forward = (whip.StartDistance or 80) + (whip.Distance - (whip.StartDistance or 80)) * reach
+    local side = 0
+    if whip.Path == "sine" then
+        side = math.sin(reach * (whip.Waves or 1.5) * 2 * math.pi) * (whip.Amplitude or 150) * mirror
+    end
+    return forward, side, up
+end
+
+--[[
+    Explosions programmées : liste { forward, side, delay, radius, damage, knockback, lift }.
+      Pattern.Type = "line"  : Count explosions espacées de Spacing à partir de Start
+      Pattern.Type = "rings" : Rings = { { Radius, Count, DelayMs, Damage, ... }, ... }
+      Pattern.Type = "points": Points = { { Forward, Side, DelayMs }, ... }
+]]
+function TMath.BurstList(pattern)
+    local list = {}
+    local function add(forward, side, delay)
+        list[#list + 1] = {
+            forward = forward, side = side, delay = delay,
+            radius = pattern.Radius, damage = pattern.Damage,
+            knockback = pattern.Knockback or 0, lift = pattern.Lift or 0,
+        }
+    end
+    if pattern.Type == "line" then
+        for i = 1, pattern.Count do
+            add(pattern.Start + (i - 1) * pattern.Spacing, 0, (i - 1) * pattern.IntervalMs)
+        end
+    elseif pattern.Type == "rings" then
+        for _, ring in ipairs(pattern.Rings) do
+            for i = 1, ring.Count do
+                local angle = (i / ring.Count) * 2 * math.pi
+                local entry = {
+                    forward = math.cos(angle) * ring.Radius, side = math.sin(angle) * ring.Radius,
+                    delay = ring.DelayMs, radius = ring.BurstRadius or pattern.Radius,
+                    damage = ring.Damage or pattern.Damage,
+                    knockback = ring.Knockback or pattern.Knockback or 0, lift = ring.Lift or pattern.Lift or 0,
+                }
+                list[#list + 1] = entry
+            end
+        end
+    else
+        for _, point in ipairs(pattern.Points or {}) do
+            add(point.Forward, point.Side or 0, point.DelayMs or 0)
+        end
+    end
+    return list
+end
+
+--- Direction (fx, fy) tournée de `degrees` autour de la verticale.
+function TMath.Rotate(fx, fy, degrees)
+    local r = math.rad(degrees)
+    local c, s = math.cos(r), math.sin(r)
+    return fx * c - fy * s, fx * s + fy * c
+end
+
 return TMath

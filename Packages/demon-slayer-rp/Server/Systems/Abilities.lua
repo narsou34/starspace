@@ -212,6 +212,11 @@ local function execute(session, caster, tech, now)
 
     for _, hit in ipairs(hits) do
         applyHit(session, caster, tech, hit, fx, fy, now)
+        local target = hit.character
+        if target:IsValid() then
+            local loc = target:GetLocation()
+            DS.Net.BroadcastInRadius(loc, FX_RADIUS, "SkillHit", tech.Kind, tech.SetId, tech.Slot, loc.X, loc.Y, loc.Z)
+        end
     end
 
     if tech.Buff then

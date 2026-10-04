@@ -63,6 +63,20 @@ NetEvents.Define("S2C", "SkillFx", {
     reliable = false,
 })
 
+-- Serveur -> Clients proches : point d'impact d'une technique instantanée
+-- (permet d'afficher l'impact exactement sur la cible touchée)
+NetEvents.Define("S2C", "SkillHit", {
+    args = {
+        { name = "kind", type = "string", maxLength = 16 },
+        { name = "setId", type = "string", maxLength = 32 },
+        { name = "slot", type = "number", integer = true, min = 1, max = DS.Catalog.Slots },
+        { name = "x", type = "number" },
+        { name = "y", type = "number" },
+        { name = "z", type = "number" },
+    },
+    reliable = false,
+})
+
 -- ===========================================================================
 -- Techniques scriptées (chronologie partagée, voir Shared/Config/Breathing/)
 -- ===========================================================================

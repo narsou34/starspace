@@ -78,7 +78,7 @@ demon-slayer-rp/
 ```
 
 Les systèmes des phases suivantes iront dans `Server/Systems/<Système>/`,
-`Client/UI/`, `Client/Effects/`, etc., et seront déclarés dans `MODULE_FILES`
+`Client/UI/`, `Client/Systems/VFX/`, etc., et seront déclarés dans `MODULE_FILES`
 de `Server/Index.lua` / `Client/Index.lua`.
 
 ## Principes d'architecture
@@ -147,17 +147,22 @@ Les mêmes commandes, sans `/` et avec tous les droits : `ds_info`, `ds_players`
 
 ## Souffles et arts démoniaques
 
-- **13 souffles** (`Shared/Config/BreathingStyles.lua`) : eau, flamme, tonnerre, vent, pierre,
-  brume, amour, serpent, insecte, fleur, son, bête, soleil — 5 techniques chacun.
-- **6 arts démoniaques** (`Shared/Config/DemonArts.lua`) : sang, temari, fils, glace, biwa, rêve —
-  5 compétences + un passif chacun.
+- **13 souffles** : eau, flamme, tonnerre, vent, pierre, brume, amour, serpent, insecte, fleur,
+  son, bête, soleil.
+  - **Scriptés** (chronologie serveur + chorégraphie VFX) : eau (`Config/Breathing/Water.lua`),
+    son, insecte, amour, vent (`Config/Breathing/{Sound,Insect,Love,Wind}.lua`), flamme, tonnerre,
+    brume, serpent (`Config/Breathing/FlameThunderMist.lua`).
+  - **Instantanés** (`Config/BreathingStyles.lua`) : pierre, fleur, bête, soleil.
+- **8 arts démoniaques** : glace, sang, ombre, fleurs (scriptés, `Config/DemonArts/Arts.lua`),
+  temari, fils, biwa, rêve (instantanés, `Config/DemonArts.lua`) — 5 compétences + un passif.
+- Les ultimes demandent le niveau 10 (`/ds_setlevel moi 10`), le dragon de l'eau le niveau 20.
 - Touches par défaut **Q E R F X C** (5 et 6 = techniques spéciales), modifiables dans
   *Paramètres > Touches* ; liste dans `Shared/Config/Abilities.lua`.
 - Ressources : Souffle (pourfendeurs) / Énergie démoniaque (démons), `Config.Resources`.
 - Régénération des démons (`Config.Factions.demons.Regeneration`), bloquée après un coup
   et plus longtemps après une technique de souffle (`BlockRegenMs`, très long pour Soleil / Insecte).
 - Serveur autoritaire : le client n'envoie que l'emplacement (1-5) ; cibles, dégâts, coûts
-  et recharges sont calculés par le serveur. Effets visuels/sons séparés (`Client/Systems/Effects.lua`).
+  et recharges sont calculés par le serveur. Effets visuels/sons séparés (`Client/Systems/VFX/`).
 
 | Commande | Permission | Description |
 | --- | --- | --- |
@@ -187,8 +192,8 @@ Faction et souffle/art ne sont pas encore sauvegardés (base de données : Phase
 - **Serveur** : `Server/Systems/Techniques/` — `Engine.lua` (chronologie, limites de touches),
   `Hitboxes.lua` (sphère, cylindre, boîte orientée, capsule, arc), `Status.lua` (immobilisation,
   invulnérabilité, toujours rétablies), `Water.lua` (les 6 comportements).
-- **Client** : `Client/Systems/Fx/` — `FxCore.lua` (particules, sons, caméra, chorégraphies,
-  budget de particules) et `Water.lua` (effets multicouches, traînée du katana sur `hand_r`).
+- **Client** : `Client/Systems/VFX/Techniques/Water.lua` (chorégraphies multicouches, traînée du
+  katana sur `hand_r`), construit sur le système VFX ci-dessous.
 - **Prérequis** vérifiés côté serveur : `Requirements = { Level = 10 }` (et `Permission` possible).
   `/ds_setlevel [joueur|moi] [niveau]` en attendant la progression (Phase 8).
 - **Performance** : une seule boucle serveur (50 ms) active uniquement pendant une technique ;
@@ -199,6 +204,39 @@ Faction et souffle/art ne sont pas encore sauvegardés (base de données : Phase
 - **Limites actuelles** : pas de modèle de katana (la traînée suit la main droite), pas de
   ralenti ni de tremblement de caméra dans l'API (remplacés par FOV / recul de caméra),
   le projectile ne collisionne pas avec les murs (le serveur n'a pas de Trace).
+
+## Système VFX (client)
+
+```
+Client/Systems/VFX/
+├── Core/
+│   ├── VFXUtils.lua        couleurs HDR, paramètres Niagara typés, LOD par distance, helpers d'assets
+│   ├── VFXManager.lua      Spawn/Attach/Destroy, budget global + quota par technique, chorégraphies
+│   ├── VFXSoundCamera.lua  sons (couches) + caméra (FOV, recul) empilés et toujours restaurés
+│   ├── VFXTrail.lua        VFX_Trail : ruban coloré + fil blanc, sur lame / corps / projectile / trajet
+│   ├── VFXBurst.lua        flash, gerbes, sphères, ondes, rayons, éclairs ; coupes (Slash) et estocs
+│   ├── VFXImpact.lua       VFX_Impact Small / Medium / Large / Massive (+ dégradation si foule)
+│   └── VFXProjectile.lua   VFX_Projectile, élan (Dash), aura, zone persistante, disparition (brume)
+├── Elements/
+│   ├── Breathing.lua       identités : eau, flamme, soleil, tonnerre, vent, brume, pierre, bête
+│   └── Others.lua          glace, ombre, sang, fleurs, son, insecte, amour, serpent + alias des ids
+└── Techniques/
+    ├── Instant.lua         techniques instantanées : visuel selon la forme réelle de la zone
+    ├── Water.lua           chorégraphies du Souffle de l'Eau
+    └── Generic.lua         chorégraphies des scripts combo/bursts/projectiles/buff/dash/zone/whip/beast
+```
+
+- **Séquence** de chaque technique : animation (serveur) -> élan -> flash -> traînée de lame ->
+  forme principale -> couches secondaires -> impacts (positions envoyées par le serveur) ->
+  dispersion -> disparition. Les trajectoires visuelles utilisent `TechniqueMath` : ce qu'on voit
+  est la zone qui touche.
+- **Élément** : chaque souffle/art pointe vers une identité (couleurs, traînée, coupe, impact,
+  projectile, élan, aura, zone, sons). Un nouveau souffle hérite automatiquement de tous les VFX ;
+  une technique peut surcharger ses couches avec une table `Fx` dans sa config.
+- **Performance** : durée de vie sur chaque particule, `MaxActiveParticles` (160, plafond strict ;
+  détails coupés à 60 %, secondaires à 80 %), `MaxPerTechnique` (100) par technique, LOD par
+  distance (1 / 0,6 / 0,35), rien n'est dessiné au-delà de `MaxDistance`, impacts simultanés
+  rétrogradés. Réglages dans `Shared/Config/Vfx.lua` (`Quality = "low"` pour les petites machines).
 
 ## Ajouter un module (exemple)
 

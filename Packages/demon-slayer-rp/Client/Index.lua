@@ -22,9 +22,20 @@ local MODULE_FILES = {
 
     -- Systèmes de jeu
     "Systems/Abilities.lua",
-    "Systems/Effects.lua",
-    "Systems/Fx/FxCore.lua",
-    "Systems/Fx/Water.lua",
+
+    -- Effets visuels (VFX) : cœur, identités d'éléments, chorégraphies
+    "Systems/VFX/Core/VFXUtils.lua",
+    "Systems/VFX/Core/VFXManager.lua",
+    "Systems/VFX/Core/VFXSoundCamera.lua",
+    "Systems/VFX/Core/VFXTrail.lua",
+    "Systems/VFX/Core/VFXBurst.lua",
+    "Systems/VFX/Core/VFXImpact.lua",
+    "Systems/VFX/Core/VFXProjectile.lua",
+    "Systems/VFX/Elements/Breathing.lua",
+    "Systems/VFX/Elements/Others.lua",
+    "Systems/VFX/Techniques/Instant.lua",
+    "Systems/VFX/Techniques/Water.lua",
+    "Systems/VFX/Techniques/Generic.lua",
 
     -- Interfaces
     "UI/Hud.lua",

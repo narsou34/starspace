@@ -77,7 +77,8 @@ end
 --[[
     Applique un coup. opts :
       damage, knockback, lift, dirX, dirY (direction de projection),
-      maxHits (par cible, défaut 1), intervalMs (entre deux touches d'une même cible)
+      maxHits (par cible, défaut 1), intervalMs (entre deux touches d'une même cible),
+      slow = { Multiplier, DurationMs }, poison = { Damage, TickMs, DurationMs }
     Retourne true si le coup a été appliqué.
 ]]
 function Instance:Hit(target, opts)
@@ -119,6 +120,17 @@ function Instance:Hit(target, opts)
     if (knockback > 0 or lift > 0) and target:IsValid() and not target:IsDead()
         and not DS.Status.IsRooted(target) then
         target:AddImpulse(Vector(dirX * knockback, dirY * knockback, lift), true)
+    end
+
+    -- Ralentissement / poison optionnels
+    if opts.slow and target:IsValid() and not target:IsDead() then
+        DS.Abilities.ApplySlow(target, opts.slow.Multiplier, opts.slow.DurationMs)
+    end
+    if opts.poison then
+        local tick = opts.poison.Damage
+        if targetIsDemon and casterIsSlayer and self.tech.BonusVsDemons then tick = tick * self.tech.BonusVsDemons end
+        DS.Status.Poison(target, tick, opts.poison.TickMs or 500, opts.poison.DurationMs or 3000,
+            session.player, self.caster)
     end
 
     -- Lame Nichirin : bloque la régénération du démon touché

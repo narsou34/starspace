@@ -1,6 +1,10 @@
 --[[
     Demon Slayer RP - Souffle de l'Eau : chorégraphies visuelles et sonores
     ------------------------------------------------------------------
+    Utilise le VFXManager (DS.VFX) : coupes d'eau qui suivent la lame,
+    VFX_Projectile (Prison d'eau), VFX_Impact Small -> Massive, élans,
+    traînées cyan colorées, plus les couches spécifiques à l'Eau ci-dessous.
+
     Chaque technique empile plusieurs COUCHES synchronisées avec la
     chronologie partagée (Shared/Config/Breathing/Water.lua) :
 
@@ -14,9 +18,14 @@
     "detail" (réduite en qualité medium / supprimée en low).
 ]]
 
-local WaterFx = DS.Module("WaterFx", { dependencies = { "FxCore" } })
+local WaterFx = DS.Module("WaterFx", { dependencies = { "VFXManager" } })
 
-local Vfx, Sfx, CamFx, Choreo = DS.Vfx, DS.Sfx, DS.CamFx, DS.Choreo
+local VFX = DS.VFX
+local Vfx = VFX                                   -- création / attache / déplacement des particules
+local Sfx = VFX.Sound
+local CamFx = VFX.Camera
+local Choreo = { Register = VFX.RegisterChoreography }
+local WATER = VFX.Element("water")
 local TMath = DS.TechMath
 local FX = Config.WaterFx
 local SFX = Config.WaterSfx
@@ -33,18 +42,16 @@ local function randomRing(cx, cy, radius)
     return cx + math.cos(angle) * r, cy + math.sin(angle) * r
 end
 
--- Éclaboussure d'impact sur une cible (coup reçu)
+-- Impact sur une cible : VFX_Impact de l'Eau (taille selon la puissance)
 local function impactOn(x, y, z, strength)
     strength = strength or 1
-    Vfx.Spawn(FX.OrbHit, x, y, z, { scale = 0.9 * strength, life = 1.2, priority = "main" })
-    Vfx.Spawn(FX.Impact, x, y, z - 60, { scale = strength, life = 1.0 })
-    Vfx.Spawn(FX.Spray, x, y, z, { scale = 0.8 * strength, life = 1.0, priority = "detail" })
-    Sfx.Play(SFX.Hit, x, y, z, { volume = 0.8, pitch = 0.9 + math.random() * 0.2 })
-    Sfx.Play(SFX.Water, x, y, z, { volume = 0.7, pitch = 1.1 })
+    local size = strength >= 1.3 and "Large" or (strength >= 0.9 and "Medium" or "Small")
+    VFX.Impact(WATER, size, x, y, z)
 end
 
 -- Grosse explosion d'eau (fin de vague, éclatement, impact du dragon)
 local function waterExplosion(x, y, z, radius, scale)
+    VFX.Impact(WATER, scale >= 2.5 and "Massive" or "Large", x, y, z)
     Vfx.Spawn(FX.SplashBig, x, y, z, { scale = scale, life = 2.5, priority = "main" })
     Vfx.Spawn(FX.RingBig, x, y, z - 80, { scale = scale * 0.9, life = 1.8, priority = "main" })
     Vfx.Spawn(FX.Burst, x, y, z + 50, { scale = scale * 0.8, life = 1.5 })
@@ -139,9 +146,10 @@ Choreo.Register("water_wave", {
         Vfx.Attach(FX.Droplets, ctx.caster, "hand_r", { life = 0.6, priority = "detail" })
         Vfx.Spawn(FX.Mist, o.x, o.y, o.z - 80, { scale = 0.6, life = 1.0, priority = "detail" })
 
-        -- Coup de katana
+        -- Coup de katana : arc d'eau qui suit la lame
         ctx:At(tl.WindupMs - 80, function()
             ctx:BladeTrail(700)
+            VFX.Slash(WATER, ctx.caster, { radius = 200, from = -85, to = 85, upFrom = 90, upTo = 20 })
             Sfx.Play(SFX.Slash, o.x, o.y, o.z, { volume = 0.9, pitch = 1.05 })
             if ctx.isLocal then CamFx.Fov(tech.Camera.Fov, tech.Camera.DurationMs) end
         end)
@@ -174,8 +182,11 @@ Choreo.Register("water_vortex", {
         local activeSec = tl.ActiveMs / 1000
         ctx.data.center = { cx, cy, cz }
 
-        -- Préparation : rotation du lanceur, cercle d'eau au sol
+        -- Préparation : rotation du lanceur (coupe à 360°), cercle d'eau au sol
         ctx:BladeTrail(tl.WindupMs + 300)
+        ctx:At(150, function()
+            VFX.Slash(WATER, ctx.caster, { radius = 190, from = 0, to = 350, upFrom = 70, upTo = 60, duration = 0.25 })
+        end)
         Sfx.Play(SFX.Slash, ctx.origin.x, ctx.origin.y, ctx.origin.z, { volume = 0.8, pitch = 0.85 })
         Vfx.Spawn(FX.Circle, cx, cy, cz + 5, { scale = 1.6, life = (tl.WindupMs + tl.ActiveMs) / 1000, priority = "main" })
         Vfx.Spawn(FX.Ring, cx, cy, cz, { scale = 1.2, life = 1.0 })
@@ -250,6 +261,7 @@ Choreo.Register("water_prison", {
 
         ctx:At(tl.WindupMs, function()
             ctx:BladeTrail(450)
+            VFX.Burst.Flash(WATER, o.x + ctx.fx * 100, o.y + ctx.fy * 100, o.z + 40, 0.8)
             Sfx.Play(SFX.Slash, o.x, o.y, o.z, { volume = 0.8, pitch = 0.8 })
             if ctx.isLocal then CamFx.Fov(tech.Camera.Fov, tech.Camera.DurationMs) end
 
@@ -257,13 +269,10 @@ Choreo.Register("water_prison", {
             local flightSec = pr.MaxDistance / pr.Speed
             local sx, sy, sz = ctx:Point(pr.SpawnForward, 0, pr.SpawnHeight)
             local ex, ey, ez = ctx:Point(pr.SpawnForward + pr.MaxDistance, 0, pr.SpawnHeight)
-            local orb = Vfx.Spawn(FX.Orb, sx, sy, sz, { scale = 1.0, life = flightSec + 0.1, priority = "main" })
-            if orb then
-                Vfx.MoveTo(orb, ex, ey, ez, flightSec)
-                Vfx.Attach(FX.Streamer, orb, "", { life = flightSec, priority = "secondary" })
-                Vfx.Attach(FX.Ribbon, orb, "", { life = flightSec, priority = "detail" })
-                Sfx.Play(SFX.Rush, sx, sy, sz, { volume = 0.25, pitch = 1.3, life = flightSec, attach = orb })
-            end
+            -- VFX_Projectile : cœur qui se déplace + traînée cyan + gouttelettes
+            local shot = VFX.Projectile(WATER, { sx, sy, sz }, ctx.yaw, { speed = pr.Speed, distance = pr.MaxDistance, scale = 1.1 })
+            local orb = shot:Head()
+            ctx.data.shot = shot
             ctx.data.orb = orb
             ctx.data.flightEnd = ctx:Elapsed() + flightSec * 1000
 
@@ -280,6 +289,7 @@ Choreo.Register("water_prison", {
     Event = function(ctx, event, x, y, z, target)
         local prison = ctx.tech.Prison
         if event == "capture" then
+            if ctx.data.shot then ctx.data.shot:Destroy() end
             Vfx.Destroy(ctx.data.orb)
             ctx.data.orb = nil
             impactOn(x, y, z, 1)
@@ -293,6 +303,7 @@ Choreo.Register("water_prison", {
                 Sfx.Play(SFX.Water, x, y, z, { volume = 0.9, pitch = 0.9 })
             end
         elseif event == "splash" then
+            if ctx.data.shot then ctx.data.shot:Destroy() end
             Vfx.Destroy(ctx.data.orb)
             ctx.data.orb = nil
             Vfx.Spawn(FX.OrbHit, x, y, z, { scale = 1.2, life = 1.2, priority = "main" })
@@ -319,6 +330,7 @@ Choreo.Register("water_flow", {
         Sfx.Play(SFX.Slash, o.x, o.y, o.z, { volume = 0.9, pitch = 1.25 })
 
         ctx:At(tl.WindupMs, function()
+            VFX.Dash(WATER, ctx.caster, { yaw = ctx.yaw, distance = 700, duration = tl.ActiveMs / 1000 })
             -- Élan : jaillissement d'eau vers l'avant
             Vfx.Spawn(FX.Spray, o.x, o.y, o.z, { yaw = ctx.yaw, scale = 1.3, life = 1.0, priority = "main" })
             Vfx.Spawn(FX.Splash, o.x, o.y, o.z - 70, { scale = 0.9, life = 1.2 })
@@ -390,9 +402,10 @@ Choreo.Register("water_tsunami", {
             Vfx.Spawn(FX.Ring, o.x, o.y, o.z - 85, { scale = 1.4, life = 1.0, priority = "secondary" })
         end)
 
-        -- Libération
+        -- Libération : grande coupe verticale qui "lève" la vague
         ctx:At(tl.WindupMs, function()
             ctx:BladeTrail(900)
+            VFX.Slash(WATER, ctx.caster, { radius = 260, from = -40, to = 40, upFrom = 260, upTo = -40, width = 70, duration = 0.16 })
             Sfx.Play(SFX.Slash, o.x, o.y, o.z, { volume = 1, pitch = 0.7 })
             Sfx.Play(SFX.CrashBig, o.x, o.y, o.z, { volume = 0.5, pitch = 0.5, falloff = 8000 })
             Vfx.Spawn(FX.Spray, o.x, o.y, o.z, { yaw = ctx.yaw, scale = 1.8, life = 1.2, priority = "main" })
@@ -446,6 +459,7 @@ Choreo.Register("water_dragon", {
         local sx, sy, sz = pathPoint(0)
 
         ctx:At(tl.WindupMs, function()
+            VFX.Slash(WATER, ctx.caster, { radius = 240, from = 90, to = -90, upFrom = 40, upTo = 200, width = 70, duration = 0.18 })
             Sfx.Play(SFX.CrashBig, o.x, o.y, o.z, { volume = 0.6, pitch = 0.8, falloff = 8000 })
             Sfx.Play(SFX.Slash, o.x, o.y, o.z, { volume = 1, pitch = 0.65 })
             Vfx.Spawn(FX.Spray, o.x, o.y, o.z, { yaw = ctx.yaw, scale = 1.6, life = 1.2 })
@@ -456,7 +470,7 @@ Choreo.Register("water_dragon", {
             local head = Vfx.Spawn(FX.Storm, sx, sy, sz, { scale = Vector(2.4, 2.4, 2.0), life = life, priority = "main" })
             local core = Vfx.Spawn(FX.Orb, sx, sy, sz, { scale = 1.8, life = life, priority = "main" })
             if head then
-                Vfx.Attach(FX.Ribbon, head, "", { life = life, priority = "main" })
+                VFX.Trail.Attach(WATER, head, "", { duration = life, width = 90, trailLife = 0.8 })
                 Vfx.Attach(FX.Streamer, head, "", { life = life, priority = "secondary" })
                 Sfx.Play(SFX.Roar, sx, sy, sz, { volume = 0.35, pitch = 0.5, life = travelSec, fadeOut = 0.5, attach = head, falloff = 7000 })
             end

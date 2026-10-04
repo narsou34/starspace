@@ -57,6 +57,7 @@ local MODULE_FILES = {
     "Systems/Techniques/Hitboxes.lua",
     "Systems/Techniques/Status.lua",
     "Systems/Techniques/Engine.lua",
+    "Systems/Techniques/Generic.lua",
     "Systems/Techniques/Water.lua",
     "Systems/AbilityCommands.lua",
 }

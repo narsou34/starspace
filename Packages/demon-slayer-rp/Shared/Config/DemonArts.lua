@@ -18,30 +18,8 @@ local SHOUT = "nanos-world::A_Mannequin_Shout"
 
 Config.DemonArts = {
 
-    sang = {
-        Name = "Sang explosif",
-        Description = "Le sang du demon s'enflamme au contact de l'air.",
-        Passive = { Name = "Sang ardent", Description = "Regeneration acceleree.", RegenMultiplier = 1.3 },
-        Techniques = {
-            { Name = "Griffes", Description = "Attaque naturelle aux griffes.",
-              Range = 250, Angle = 80, Damage = 18, Cost = 8, CooldownMs = 1500,
-              Animation = CHOP, Effect = "nanos-world::P_Blood_Impact" },
-            { Name = "Gerbe de sang", Description = "Projette du sang qui s'embrase.",
-              Range = 450, Angle = 70, Damage = 24, Cost = 15, CooldownMs = 4000,
-              Animation = THROW, Effect = "nanos-world::P_Fire_Exp_01", Sound = "nanos-world::A_Explosion_Small" },
-            { Name = "Explosion de sang", Description = "Detonation autour de soi.",
-              Shape = "circle", Range = 350, Damage = 28, Cost = 22, CooldownMs = 6000, Knockback = 600,
-              Animation = SHOUT, AnimationSlot = "FullBody", Effect = "nanos-world::P_Explosion_Fire_01", EffectOffset = 0,
-              Sound = "nanos-world::A_Explosion_Small" },
-            { Name = "Bond feroce", Description = "Saute sur sa proie.",
-              Shape = "dash", Range = 650, Dash = 1500, Damage = 22, Cost = 14, CooldownMs = 4500,
-              Effect = "nanos-world::P_Blood_Impact" },
-            { Name = "Eveil du sang", Description = "Transformation : force et vitesse accrues.",
-              Shape = "self", Damage = 0, Cost = 40, CooldownMs = 30000,
-              Buff = { SpeedMultiplier = 1.3, DamageMultiplier = 1.5, Heal = 30, DurationMs = 10000 },
-              Animation = SHOUT, AnimationSlot = "FullBody", Effect = "nanos-world::P_FXVariety_FireStorm", EffectOffset = 0, EffectDuration = 2.5 },
-        },
-    },
+    -- Arts scriptés (timeline + VFX chorégraphiés) : glace, sang, ombre, fleurs
+    -- -> Shared/Config/DemonArts/Arts.lua
 
     temari = {
         Name = "Temari",
@@ -87,29 +65,6 @@ Config.DemonArts = {
               Shape = "circle", Range = 650, Damage = 50, Cost = 50, CooldownMs = 24000,
               Slow = { Multiplier = 0.5, DurationMs = 3000 },
               Animation = SHOUT, AnimationSlot = "FullBody", Effect = "nanos-world::P_FXVariety_DarkStorm", EffectOffset = 0, EffectDuration = 3 },
-        },
-    },
-
-    glace = {
-        Name = "Glace",
-        Description = "Art de Doma, Lune superieure : glace et brume gelante.",
-        Passive = { Name = "Sang glacial", Description = "Regeneration tres rapide.", RegenMultiplier = 1.6 },
-        Techniques = {
-            { Name = "Eventails de glace", Description = "Coups d'eventails tranchants.",
-              Range = 300, Angle = 90, Damage = 20, Cost = 10, CooldownMs = 1800, Effect = "nanos-world::P_GrenadeEXP_Ice" },
-            { Name = "Nuages gelants", Description = "Brume glacee qui ralentit.",
-              Range = 550, Angle = 80, Damage = 16, Cost = 16, CooldownMs = 5000,
-              Slow = { Multiplier = 0.5, DurationMs = 3000 }, Effect = "nanos-world::P_LTGrenadeEXP_Snow", EffectDuration = 2 },
-            { Name = "Vignes de lotus", Description = "Lianes de glace a distance.",
-              Shape = "line", Range = 1000, Width = 200, Damage = 26, Cost = 18, CooldownMs = 5000,
-              Animation = THROW, Effect = "nanos-world::P_LTGrenadeEXP_Ice" },
-            { Name = "Hiver glace", Description = "Pics de glace tout autour.",
-              Shape = "circle", Range = 450, Damage = 30, Cost = 24, CooldownMs = 7000, Knockback = 500,
-              Animation = SHOUT, AnimationSlot = "FullBody", Effect = "nanos-world::P_GrenadeEXP_Snow", EffectOffset = 0 },
-            { Name = "Bodhisattva de glace", Description = "Statue geante de glace devastatrice.",
-              Shape = "circle", Range = 750, Damage = 52, Cost = 55, CooldownMs = 26000, Knockback = 900,
-              Slow = { Multiplier = 0.5, DurationMs = 4000 },
-              Animation = SHOUT, AnimationSlot = "FullBody", Effect = "nanos-world::P_FXVariety_AquaStorm", EffectOffset = 0, EffectDuration = 3.5 },
         },
     },
 

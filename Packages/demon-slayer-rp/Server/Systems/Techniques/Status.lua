@@ -67,10 +67,48 @@ function Status.Invulnerable(character, ms)
     schedule(invulnerable, character, ms, releaseInvulnerable)
 end
 
+-- ---------------------------------------------------------------------------
+-- Poison (Souffle de l'Insecte...) : dégâts périodiques, un seul poison par
+-- cible (le plus fort est gardé, la durée est prolongée).
+-- ---------------------------------------------------------------------------
+local poisoned = {} -- [Character] = { damage, untilMs, player, causer, timer }
+
+function Status.Poison(character, damage, tickMs, durationMs, player, causer)
+    if not (character and character:IsValid()) or character:IsDead() then return end
+    local now = Utils.NowMs()
+    local current = poisoned[character]
+    if current then
+        current.damage = math.max(current.damage, damage)
+        current.untilMs = math.max(current.untilMs, now + durationMs)
+        return
+    end
+    local state = { damage = damage, untilMs = now + durationMs, player = player, causer = causer }
+    poisoned[character] = state
+    state.timer = Timer.SetInterval(function()
+        if not character:IsValid() or character:IsDead() or Utils.NowMs() > state.untilMs then
+            poisoned[character] = nil
+            return false
+        end
+        local instigator = (state.player and state.player:IsValid()) and state.player or nil
+        local source = (state.causer and state.causer:IsValid()) and state.causer or nil
+        character:ApplyDamage(math.floor(state.damage + 0.5), "", DamageType.Unknown, Vector(0, 0, 0), instigator, source)
+    end, tickMs)
+    Timer.Bind(state.timer, character)
+end
+
+function Status.IsPoisoned(character)
+    return poisoned[character] ~= nil
+end
+
 --- Rétablit immédiatement l'état normal (réapparition, changement de faction...).
 function Status.Clear(character)
     if rooted[character] then releaseRoot(character) end
     if invulnerable[character] then releaseInvulnerable(character) end
+    local poison = poisoned[character]
+    if poison then
+        poisoned[character] = nil
+        if poison.timer then Timer.ClearInterval(poison.timer) end
+    end
 end
 
 return Status
