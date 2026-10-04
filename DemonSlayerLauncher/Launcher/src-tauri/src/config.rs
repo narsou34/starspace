@@ -77,10 +77,17 @@ pub fn load(app: &AppHandle) -> Result<LauncherConfig, String> {
             "défaut développement".into(),
             ConfigFile { api_base_url: Some("http://127.0.0.1:8080".into()), request_timeout_seconds: None },
         ));
-    } else if let Ok(dir) = app.path().resource_dir() {
-        let path = dir.join(CONFIG_FILE);
-        if let Some(cfg) = read_file(&path) {
-            candidates.push((path.display().to_string(), cfg));
+    } else {
+        if let Ok(dir) = app.path().resource_dir() {
+            let path = dir.join(CONFIG_FILE);
+            if let Some(cfg) = read_file(&path) {
+                candidates.push((path.display().to_string(), cfg));
+            }
+        }
+        // Copie intégrée à l'exécutable : un .exe autonome (sans installateur)
+        // démarre toujours, même si le fichier de ressources est absent.
+        if let Ok(cfg) = serde_json::from_str::<ConfigFile>(include_str!("../resources/launcher.config.json")) {
+            candidates.push(("configuration intégrée".into(), cfg));
         }
     }
 
