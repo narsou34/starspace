@@ -1,0 +1,267 @@
+/* ═══ Décor illustré ═══════════════════════════════════════════ */
+.scape {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  --mx: 0;
+  --my: 0;
+  transition:
+    --sky-1 var(--theme-dur) var(--ease),
+    --sky-2 var(--theme-dur) var(--ease),
+    --sky-3 var(--theme-dur) var(--ease),
+    --mount-1 var(--theme-dur) var(--ease),
+    --mount-2 var(--theme-dur) var(--ease),
+    --mount-3 var(--theme-dur) var(--ease),
+    --moon var(--theme-dur) var(--ease),
+    --mist var(--theme-dur) var(--ease),
+    --shade var(--theme-dur) var(--ease),
+    --lamp var(--theme-dur) var(--ease),
+    --accent var(--theme-dur) var(--ease),
+    --accent-2 var(--theme-dur) var(--ease);
+}
+
+.scape > * {
+  position: absolute;
+  inset: 0;
+}
+
+.scape__sky {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 52%, var(--sky-3) 100%);
+}
+
+.scape__svg {
+  width: 100%;
+  height: 100%;
+}
+
+.scape__layer {
+  transform: translate(calc(var(--mx) * var(--d) * -46px), calc(var(--my) * var(--d) * -16px));
+  transition: transform 1.4s var(--ease);
+}
+
+.scape__scene {
+  animation: fade 1.2s var(--ease);
+}
+
+.m1 { fill: var(--mount-1); }
+.fuji { fill: color-mix(in srgb, var(--mount-1) 65%, var(--sky-3)); }
+.m2 { fill: var(--mount-2); }
+.m3 { fill: var(--mount-3); }
+
+.scape__snow {
+  fill: var(--moon);
+  opacity: 0.6;
+}
+
+.scape__moon {
+  fill: var(--moon);
+}
+
+.scape__crater {
+  fill: var(--sky-3);
+  opacity: 0.14;
+}
+
+.star {
+  fill: var(--moon);
+  opacity: 0.75;
+}
+
+.star--twinkle {
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.12; }
+}
+
+.stop-moon { stop-color: var(--moon); }
+.stop-accent { stop-color: var(--accent); }
+.stop-accent2 { stop-color: var(--accent-2); }
+.stop-mist { stop-color: var(--mist); }
+.stop-lamp { stop-color: var(--lamp); }
+.stop-sky3 { stop-color: var(--sky-3); }
+.stop-shade { stop-color: var(--shade); }
+
+.scape__drift {
+  animation: drift 55s ease-in-out infinite alternate;
+}
+
+.scape__drift--slow {
+  animation-duration: 90s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes drift {
+  from { transform: translateX(-90px); }
+  to { transform: translateX(90px); }
+}
+
+/* Village */
+.house { fill: var(--mount-3); }
+.house--back { fill: var(--mount-2); }
+.roof { fill: color-mix(in srgb, var(--mount-3) 70%, #000); }
+.roof--back { fill: color-mix(in srgb, var(--mount-2) 75%, #000); }
+.lamp { fill: var(--lamp); opacity: 0.95; }
+.lamp--dim { opacity: 0.55; }
+.lantern { fill: color-mix(in srgb, var(--lamp) 70%, #ff5a3a); }
+
+.scape__string {
+  fill: none;
+  stroke: color-mix(in srgb, var(--mount-3) 60%, #000);
+  stroke-width: 2;
+}
+
+/* Forêt de bambous */
+.bamboo path {
+  fill: none;
+  stroke: var(--mount-3);
+  stroke-linecap: round;
+}
+
+.bamboo--back path {
+  stroke: var(--mount-1);
+  opacity: 0.75;
+}
+
+.bamboo__node {
+  stroke: color-mix(in srgb, var(--shade) 70%, transparent);
+  stroke-width: 3;
+}
+
+/* Sanctuaire */
+.torii {
+  fill: color-mix(in srgb, var(--accent) 60%, var(--shade));
+}
+
+/* Lac */
+.scape__reflect {
+  fill: var(--moon);
+  opacity: 0.55;
+  animation: shimmer 3.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.55; transform: translateX(0); }
+  50% { opacity: 0.2; transform: translateX(6px); }
+}
+
+.scape__particles {
+  width: 100%;
+  height: 100%;
+}
+
+/* Voile de lisibilité : teinté, jamais noir uni */
+.scape--full .scape__veil {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--shade) 72%, transparent) 0%, color-mix(in srgb, var(--shade) 30%, transparent) 38%, transparent 62%),
+    linear-gradient(0deg, color-mix(in srgb, var(--shade) 75%, transparent) 0%, transparent 38%),
+    radial-gradient(ellipse 120% 100% at 50% 40%, transparent 55%, color-mix(in srgb, var(--shade) 70%, transparent) 100%);
+}
+
+.scape--card .scape__veil {
+  background: linear-gradient(0deg, color-mix(in srgb, var(--shade) 92%, transparent) 0%, color-mix(in srgb, var(--shade) 30%, transparent) 55%, transparent 80%);
+}
+
+.scape__grain {
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Key art du personnage (fenêtre en arche) ── */
+.figure {
+  position: absolute;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+
+.figure__glow {
+  position: absolute;
+  width: 70%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 65%);
+  filter: blur(30px);
+  animation: breathe 6s ease-in-out infinite;
+}
+
+.figure__inner {
+  --sx: 50%;
+  position: relative;
+  /* la plus grande arche qui tient dans le conteneur */
+  height: min(100cqh, 100cqw * 1.253);
+  aspect-ratio: 494 / 619;
+  transition: transform 1s var(--ease);
+  animation: figure-in 1.2s var(--ease) 0.15s backwards;
+}
+
+@keyframes figure-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+}
+
+.figure__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 999px 999px 28px 28px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gold) 70%, transparent),
+    0 0 0 7px rgba(8, 10, 24, 0.55),
+    0 0 0 8px color-mix(in srgb, var(--accent-2) 55%, transparent),
+    0 40px 90px -30px color-mix(in srgb, var(--accent) 90%, transparent);
+}
+
+.figure__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.04);
+}
+
+/* teinte du thème + fondu bas vers le décor */
+.figure__tint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, color-mix(in srgb, var(--accent) 45%, transparent) 0%, transparent 35%),
+    radial-gradient(ellipse 90% 70% at 50% 30%, transparent 50%, color-mix(in srgb, var(--sky-2) 45%, transparent) 100%);
+  mix-blend-mode: screen;
+}
+
+/* reflet qui suit la souris */
+.figure__shine {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--sx) 20%, rgba(255, 255, 255, 0.16), transparent 45%);
+}
+
+.figure__seal {
+  position: absolute;
+  left: -1.3rem;
+  bottom: 14%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.55rem 0.4rem;
+  border-radius: 6px;
+  font-family: var(--font-jp);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+  background: linear-gradient(180deg, #ff4a5c, #c4162a);
+  box-shadow: 0 10px 24px -8px rgba(232, 48, 78, 0.8);
+  transform: rotate(-3deg);
+}

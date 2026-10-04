@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Emblem } from '../../components/Emblem';
+import { HeroFigure } from '../../components/HeroFigure';
 import { ApiStatus, useApiPing } from '../../components/ServerPing';
-import { VerticalKanji } from '../../components/VerticalKanji';
 import type { AppInfo, PublicConfig } from '../../models/types';
 import { LoginForm } from './LoginForm';
 import { ForgotForm, ResetForm } from './PasswordForms';
@@ -22,39 +22,31 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
 
   return (
     <div className="auth">
-      <section className="auth__panel">
+      <section className="auth__card">
         <div className="auth__brand">
-          <Emblem size={58} />
+          <Emblem size={52} />
           <div>
-            <h1>
-              <em>NDR</em>
-              <span className="brand-sep">|</span>
-              DEMON SLAYER
-            </h1>
-            <p>Serveur roleplay · nanos world</p>
+            <strong>
+              <span>NDR</span> Demon Slayer
+            </strong>
+            <small>Serveur roleplay · nanos world</small>
           </div>
         </div>
 
         <div className="auth__welcome">
-          <h2>{mode === 'register' ? 'Rejoignez le Corps' : 'Bienvenue sur NDR | Demon Slayer'}</h2>
+          <h2>{mode === 'register' ? 'Rejoignez le Corps' : mode === 'login' ? 'Bon retour, pourfendeur' : 'Récupérer mon compte'}</h2>
           <p>
             {mode === 'register'
               ? 'Créez votre compte pour postuler à la whitelist et préparer votre personnage.'
               : mode === 'login'
                 ? 'Connectez-vous pour commencer.'
-                : 'Récupérez l’accès à votre compte.'}
+                : 'Un code vous sera envoyé par e-mail.'}
           </p>
         </div>
 
         {(mode === 'login' || mode === 'register') && (
-          <div className="tabs" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'login'}
-              className={mode === 'login' ? 'is-active' : ''}
-              onClick={() => go('login')}
-            >
+          <div className="seg seg--wide" role="tablist">
+            <button type="button" role="tab" aria-selected={mode === 'login'} className={mode === 'login' ? 'is-active' : ''} onClick={() => go('login')}>
               Connexion
             </button>
             <button
@@ -68,7 +60,6 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
             >
               Créer un compte
             </button>
-            <span className={`tabs__ink tabs__ink--${mode}`} />
           </div>
         )}
 
@@ -76,9 +67,7 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
           {mode === 'login' && <LoginForm notice={notice} onForgot={() => go('forgot')} />}
           {mode === 'register' && <RegisterForm />}
           {mode === 'forgot' && <ForgotForm onBack={() => go('login')} onSent={(msg) => go('reset', msg)} />}
-          {mode === 'reset' && (
-            <ResetForm notice={notice} onBack={() => go('forgot')} onDone={(msg) => go('login', msg)} />
-          )}
+          {mode === 'reset' && <ResetForm notice={notice} onBack={() => go('forgot')} onDone={(msg) => go('login', msg)} />}
         </div>
 
         <footer className="auth__footer">
@@ -87,11 +76,15 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
         </footer>
       </section>
 
-      <aside className="auth__art" aria-hidden="true">
-        <VerticalKanji text="鬼殺隊" className="auth__vertical" />
-        <div className="auth__quote">
-          <span>全集中</span>
-          <p>« Concentration totale. Que votre souffle ne s’éteigne jamais. »</p>
+      <aside className="auth__showcase" aria-hidden="true">
+        <HeroFigure className="auth__figure" />
+        <div className="auth__title">
+          <p className="kicker">鬼殺隊 · Corps des pourfendeurs</p>
+          <h1 className="brandtitle">
+            <span className="brandtitle__ndr">NDR</span>
+            <span className="brandtitle__name">Demon Slayer</span>
+          </h1>
+          <p className="auth__quote">« Concentration totale. Que votre souffle ne s’éteigne jamais. »</p>
         </div>
       </aside>
     </div>

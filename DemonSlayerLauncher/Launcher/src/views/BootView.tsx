@@ -4,10 +4,10 @@ export function BootView({ message }: { message: string }) {
   return (
     <div className="boot">
       <div className="boot__emblem">
-        <Emblem size={96} />
+        <Emblem size={104} />
       </div>
       <p className="boot__title">
-        <em>NDR</em> | DEMON SLAYER
+        <span>NDR</span> Demon Slayer
       </p>
       <p className="boot__message">{message}</p>
       <div className="boot__bar">

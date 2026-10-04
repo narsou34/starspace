@@ -1,4 +1,4 @@
-/** Icônes au trait, cohérentes avec la typographie fine du launcher. */
+/** Icônes au trait (24×24), cohérentes sur tout le launcher. */
 const paths = {
   home: 'M3 11l9-7 9 7M5 9.5V20h5v-6h4v6h5V9.5',
   account: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c1.5-4 4.5-6 8-6s6.5 2 8 6',
@@ -16,20 +16,48 @@ const paths = {
   device: 'M4 5h16v11H4zM2 19h20M9 16v3M15 16v3',
   check: 'M5 12.5l4.5 4.5L19 7.5',
   lock: 'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3',
+  server: 'M4 5h16v5H4zM4 14h16v5H4zM8 7.5h.01M8 16.5h.01M12 7.5h5M12 16.5h5',
+  shop: 'M5 8h14l-1.2 11a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8L5 8zM9 8V6a3 3 0 016 0v2',
+  bell: 'M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 20a2 2 0 004 0',
+  play: 'M8 5.5v13l10.5-6.5z',
+  users: 'M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.3a3.5 3.5 0 010 6.4M18 14.8c1.8.7 3 2.4 3.5 5.2',
+  signal: 'M4 20v-3M9 20v-7M14 20V9M19 20V4',
+  clock: 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2',
+  calendar: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',
+  star: 'M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z',
+  trophy: 'M8 4h8v5a4 4 0 01-8 0V4zM8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 13v4M8.5 20h7M10 17h4v3h-4z',
+  send: 'M4 12l16-8-6 16-2.5-6.5L4 12zM11.5 13.5L20 4',
+  clip: 'M20 11.5l-8 8a5 5 0 01-7-7l8.5-8.5a3.3 3.3 0 014.7 4.7L9.7 17.2a1.7 1.7 0 01-2.4-2.4L15 7',
+  plus: 'M12 5v14M5 12h14',
+  x: 'M6 6l12 12M18 6L6 18',
+  arrow: 'M5 12h14M13 6l6 6-6 6',
+  hourglass: 'M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9',
+  mic: 'M12 15a3 3 0 003-3V6a3 3 0 00-6 0v6a3 3 0 003 3zM6 11a6 6 0 0012 0M12 17v4',
+  palette: 'M12 3a9 9 0 100 18c1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5 0-.9.7-1.5 1.6-1.5H16a5 5 0 005-5c0-4.1-4-7.5-9-7.5zM7.5 11h.01M10 7h.01M15 7.5h.01',
+  monitor: 'M3 5h18v12H3zM8 21h8M12 17v4',
+  globe: 'M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z',
+  folder: 'M3 6a1 1 0 011-1h5l2 2h9a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V6z',
+  map: 'M9 4L3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20',
+  flame: 'M12 21c4 0 7-2.8 7-6.8 0-3.6-2.6-6-4-8.7-.8 2-2 3.2-3.3 3.6C12 6.5 11 4.4 9 3c.3 3-1.5 5-3 7-1 1.3-1 2.6-1 4.2C5 18.2 8 21 12 21z',
+  wave: 'M2 12c2.5-3 5-3 7.5 0s5 3 7.5 0 4-2.5 5-1.5M2 17c2.5-3 5-3 7.5 0s5 3 7.5 0 4-2.5 5-1.5M2 7c2.5-3 5-3 7.5 0s5 3 7.5 0 4-2.5 5-1.5',
+  eye: 'M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',
+  refresh: 'M20 11a8 8 0 00-14.3-4.3L4 9M4 4v5h5M4 13a8 8 0 0014.3 4.3L20 15M20 20v-5h-5',
+  info: 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 11v6M12 7.5h.01',
+  edit: 'M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4',
 } as const;
 
 export type IconName = keyof typeof paths;
 
-export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
+export function Icon({ name, size = 18, className }: { name: IconName; size?: number; className?: string }) {
   return (
     <svg
-      className="icon"
+      className={`icon${className ? ` ${className}` : ''}`}
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.6}
+      strokeWidth={1.7}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"

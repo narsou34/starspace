@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { bridge } from './api/bridge';
 import { useAuth } from './auth/AuthContext';
-import { Background } from './components/Background';
 import { TitleBar } from './components/TitleBar';
 import { useToast } from './components/Toasts';
 import { errorMessage, type AppInfo, type PublicConfig } from './models/types';
+import { Landscape } from './scenery/Landscape';
+import { useSettings } from './settings/SettingsContext';
+import { themeVars } from './theme/themes';
 import { AuthScreen } from './views/auth/AuthScreen';
 import { BootView } from './views/BootView';
+import { VIEWS, type ViewId } from './views/navigation';
 import { Shell } from './views/Shell';
 
 type Phase = 'boot' | 'ready';
@@ -14,9 +17,11 @@ type Phase = 'boot' | 'ready';
 export function App() {
   const { user, restore } = useAuth();
   const toast = useToast();
+  const { settings } = useSettings();
   const [phase, setPhase] = useState<Phase>('boot');
   const [info, setInfo] = useState<AppInfo | null>(null);
   const [config, setConfig] = useState<PublicConfig | null>(null);
+  const [view, setView] = useState<ViewId>('home');
   const previousUser = useRef<number | null>(null);
 
   // Démarrage : infos launcher, configuration publique, session mémorisée.
@@ -31,9 +36,8 @@ export function App() {
       } catch (err) {
         toast.show('error', 'Connexion impossible', errorMessage(err));
       }
-      // Affichage minimal de l'écran de démarrage pour éviter un flash.
       const elapsed = performance.now() - started;
-      if (elapsed < 700) await new Promise((r) => setTimeout(r, 700 - elapsed));
+      if (elapsed < 900) await new Promise((r) => setTimeout(r, 900 - elapsed));
       if (alive) setPhase('ready');
     })();
     return () => {
@@ -46,20 +50,26 @@ export function App() {
     if (user && previousUser.current !== user.id && phase === 'ready') {
       toast.show('success', `Bienvenue, ${user.username}.`, 'Votre souffle est prêt.');
     }
+    if (!user) setView('home');
     previousUser.current = user?.id ?? null;
   }, [user, phase, toast]);
 
-  const variant = phase === 'boot' ? 'boot' : user ? 'app' : 'auth';
+  const onViewChange = useCallback((v: ViewId) => setView(v), []);
+
+  // Ambiance : la page choisit thème + décor ; le joueur peut imposer un thème.
+  const page = user && phase === 'ready' ? VIEWS[view] : VIEWS.home;
+  const theme = settings.theme === 'auto' ? page.theme : settings.theme;
+  const scene = phase === 'boot' ? 'lake' : page.scene;
 
   return (
-    <div className="app">
-      <Background variant={variant} />
+    <div className="app" style={themeVars(theme)}>
+      <Landscape theme={theme} scene={scene} />
       <TitleBar />
       <div className="app__body">
         {phase === 'boot' ? (
           <BootView message="Connexion au quartier général du Corps…" />
         ) : user ? (
-          <Shell info={info} config={config} />
+          <Shell info={info} config={config} theme={theme} onViewChange={onViewChange} />
         ) : (
           <AuthScreen info={info} config={config} />
         )}

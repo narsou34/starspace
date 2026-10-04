@@ -12,11 +12,11 @@ body,
 }
 
 body {
-  background: var(--ink-0);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.5;
+  background: #050816;
+  color: var(--paper);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
   user-select: none;
@@ -28,7 +28,8 @@ textarea {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -45,7 +46,7 @@ button:disabled {
 }
 
 :focus-visible {
-  outline: 1px solid var(--gold);
+  outline: 2px solid var(--accent-2);
   outline-offset: 3px;
 }
 
@@ -56,62 +57,138 @@ p {
   margin: 0;
 }
 
-img {
-  -webkit-user-drag: none;
-}
-
 ::selection {
-  background: rgba(196, 22, 42, 0.55);
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
   color: #fff;
 }
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(236, 230, 220, 0.12);
+  background: rgba(255, 255, 255, 0.14);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
+/* ── Application ── */
 .app {
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   isolation: isolate;
+  transition:
+    --accent var(--theme-dur) var(--ease),
+    --accent-2 var(--theme-dur) var(--ease),
+    --accent-ink var(--theme-dur) var(--ease);
 }
 
 .app__body {
   position: relative;
+  z-index: 1;
   flex: 1;
   min-height: 0;
-  z-index: 1;
 }
 
-.muted {
-  color: var(--muted);
-}
-
-.eyebrow {
-  font-size: 11px;
+/* ── Typographie ── */
+.kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 500;
+  color: var(--accent-ink);
 }
 
 .page-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 40px;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+  font-size: 2.9rem;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  margin-top: 0.35rem;
+  text-shadow: 0 0 40px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
-/* ── Barre de titre ─────────────────────────────────────── */
+.page-title--sm {
+  font-size: 1.9rem;
+}
+
+.lead {
+  color: var(--paper-2);
+  max-width: 36rem;
+  margin-top: 0.6rem;
+}
+
+.muted {
+  color: var(--paper-3);
+}
+
+.note {
+  font-size: 0.8rem;
+  color: var(--paper-4);
+}
+
+.mono {
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+.flip {
+  transform: scaleX(-1);
+}
+
+/* Titre-logo « NDR / DEMON SLAYER » */
+.brandtitle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0.6rem 0 0;
+}
+
+.brandtitle__ndr {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: 0.55em;
+  background: var(--flame-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brandtitle__ndr::after {
+  content: '';
+  width: 4.5rem;
+  height: 2px;
+  background: var(--flame-grad);
+  border-radius: 2px;
+}
+
+.brandtitle__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.2rem, 5.6vw, 7.4rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 30%, color-mix(in srgb, var(--accent-ink) 85%, white) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 30px color-mix(in srgb, var(--accent) 45%, transparent));
+}
+
+.brandtitle--md .brandtitle__name {
+  font-size: clamp(2.6rem, 4.2vw, 5.2rem);
+}
+
+/* ── Titre de fenêtre ── */
 .titlebar {
   position: relative;
   z-index: 10;
@@ -120,25 +197,23 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: 14px;
-  background: linear-gradient(180deg, rgba(5, 5, 8, 0.85), rgba(5, 5, 8, 0.35));
-  border-bottom: 1px solid var(--line);
+  padding-left: 1rem;
+  background: linear-gradient(180deg, rgba(5, 8, 22, 0.55), rgba(5, 8, 22, 0));
 }
 
 .titlebar__brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  color: var(--text-soft);
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--paper-2);
 }
 
-.titlebar__kanji {
-  font-family: var(--font-jp);
-  color: var(--crimson-hi);
-  letter-spacing: 0.2em;
-  opacity: 0.8;
+.titlebar__brand b {
+  color: #ff6a55;
 }
 
 .titlebar__controls {
@@ -147,11 +222,11 @@ img {
 }
 
 .titlebar__controls button {
-  width: 46px;
+  width: 3rem;
   height: 100%;
   display: grid;
   place-items: center;
-  color: var(--muted);
+  color: var(--paper-2);
   transition: background 0.15s, color 0.15s;
 }
 
@@ -164,108 +239,115 @@ img {
 }
 
 .titlebar__controls button:hover {
-  background: rgba(236, 230, 220, 0.07);
-  color: var(--text);
-}
-
-.titlebar__controls .titlebar__close:hover {
-  background: var(--crimson);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
-/* ── Démarrage ──────────────────────────────────────────── */
+.titlebar__controls .titlebar__close:hover {
+  background: #e8304e;
+}
+
+/* ── Démarrage ── */
 .boot {
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 0.9rem;
 }
 
 .boot__emblem {
-  filter: drop-shadow(0 0 30px rgba(196, 22, 42, 0.55));
+  filter: drop-shadow(0 0 40px color-mix(in srgb, var(--accent) 70%, transparent));
   animation: breathe 2.6s var(--ease) infinite;
 }
 
 .boot__title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 22px;
-  letter-spacing: 0.4em;
-  margin-top: 12px;
+  font-size: 1.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  margin-top: 0.6rem;
+}
+
+.boot__title span {
+  background: var(--flame-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .boot__message {
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  color: var(--paper-2);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
 }
 
 .boot__bar {
-  width: 220px;
-  height: 2px;
-  background: var(--line);
+  width: 16rem;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
-  margin-top: 8px;
+  margin-top: 0.4rem;
 }
 
 .boot__bar span {
   display: block;
   width: 40%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, var(--crimson-hi), transparent);
+  background: var(--accent-grad);
+  box-shadow: 0 0 12px var(--accent-2);
   animation: sweep 1.3s ease-in-out infinite;
 }
 
+/* ── Animations ── */
 @keyframes breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1.04);
-    opacity: 1;
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 @keyframes sweep {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(250%);
-  }
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
 }
 
-@keyframes rise {
+@keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translateY(16px) scale(0.985);
+    filter: blur(10px);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
   }
 }
 
-/* Kanji empilés (voir VerticalKanji.tsx) */
-.vkanji {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--font-jp);
-  font-weight: 700;
-  line-height: 1;
+@keyframes fade {
+  from { opacity: 0; }
+}
+
+.reveal {
+  animation: reveal 0.75s var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+}
+
+/* Réglage « Animations : Aucune » ou préférence système */
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+[data-motion='low'] .reveal {
+  animation-duration: 0.4s;
+  animation-delay: 0s;
 }

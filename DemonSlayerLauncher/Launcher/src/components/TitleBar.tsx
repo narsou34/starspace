@@ -11,12 +11,9 @@ export function TitleBar() {
   return (
     <header className="titlebar" data-tauri-drag-region>
       <div className="titlebar__brand" data-tauri-drag-region>
-        <Emblem size={18} />
+        <Emblem size={16} />
         <span data-tauri-drag-region>
-          <b>NDR</b> | DEMON SLAYER
-        </span>
-        <span className="titlebar__kanji" data-tauri-drag-region>
-          鬼殺隊
+          <b>NDR</b> | Demon Slayer
         </span>
       </div>
       {isTauri && (
@@ -27,12 +24,7 @@ export function TitleBar() {
           <button type="button" aria-label="Agrandir" onClick={() => void windowAction('toggleMaximize')}>
             <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" /></svg>
           </button>
-          <button
-            type="button"
-            className="titlebar__close"
-            aria-label="Fermer"
-            onClick={() => void windowAction('close')}
-          >
+          <button type="button" className="titlebar__close" aria-label="Fermer" onClick={() => void windowAction('close')}>
             <svg viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" /></svg>
           </button>
         </div>
