@@ -56,7 +56,8 @@
         "displayLanguageSelector": false,
         "languages": [
           "French"
-        ]
+        ],
+        "installerIcon": "icons/icon.ico"
       }
     }
   }
