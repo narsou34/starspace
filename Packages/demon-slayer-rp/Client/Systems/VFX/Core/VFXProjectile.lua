@@ -34,6 +34,7 @@ end
 function Handle:Destroy()
     self.alive = false
     for _, particle in ipairs(self.parts) do VFX.Destroy(particle) end
+    for _, card in ipairs(self.toon or {}) do VFX.Toon.Stop(card, 0.08) end
 end
 
 function Handle:Impact(x, y, z, size)
@@ -56,6 +57,30 @@ function VFX.Projectile(element, start, yaw, opts)
     handle.parts = VFX.Layers(opts.core or spec.Core, start[1], start[2], start[3], yaw,
         { scale = scale, life = flight + 0.1, priority = "main", lod = lod })
     for _, particle in ipairs(handle.parts) do VFX.MoveTo(particle, endX, endY, endZ, flight) end
+
+    -- Forme anime : tête peinte qui vole jusqu'au bout de la trajectoire
+    -- (croissant volant pour les lames d'air / de sang..., sinon boule face caméra)
+    local toon = VFX.ToonOf(element)
+    local orb = opts.orb or toon.Orb
+    local size = (opts.orbSize or 130) * scale
+    handle.toon = {}
+    if orb:sub(1, 6) == "Slash_" then
+        handle.toon[1] = VFX.Toon.Card(orb, {
+            x = start[1], y = start[2], z = start[3], right = { fx, fy, 0 }, up = { -fy, fx, 0.25 },
+            size = size * 1.6, moveTo = { endX, endY, endZ }, moveTime = flight, life = flight + 0.05,
+            fadeIn = 0.03, fadeOut = 0.08, scale = 0.8, grow = 1.15, glow = toon.Glow, lod = lod,
+        })
+    else
+        handle.toon[1] = VFX.Toon.Sprite(orb, {
+            x = start[1], y = start[2], z = start[3], size = size, moveTo = { endX, endY, endZ }, moveTime = flight,
+            life = flight + 0.05, fadeIn = 0.03, fadeOut = 0.08, scale = 0.7, grow = 1.1,
+            color = toon.OrbTint or toon.White, glow = toon.Glow * 1.2, lod = lod,
+        })
+        handle.toon[2] = VFX.Toon.Sprite("Orb_Soft", {
+            x = start[1], y = start[2], z = start[3], size = size * 1.8, moveTo = { endX, endY, endZ }, moveTime = flight,
+            life = flight + 0.05, alpha = 0.45, fadeOut = 0.08, color = toon.Tint, glow = toon.Glow, priority = "secondary", lod = lod,
+        })
+    end
 
     local head = handle:Head()
     if head then
@@ -114,6 +139,30 @@ function VFX.Dash(element, caster, opts)
         VFX.Burst.Lightning(element, { loc.X, loc.Y, loc.Z + 40 }, { endPoint[1], endPoint[2], endPoint[3] + 40 }, { bolts = 2, spread = 160 })
     end
 
+    -- 2b. Forme anime : lignes de vitesse au départ + traits de l'élément le long du trajet
+    local toon = VFX.ToonOf(element)
+    VFX.Toon.Sprite("Speed_Lines", { x = loc.X, y = loc.Y, z = loc.Z, size = 320, scale = 0.6, grow = 1.4,
+        color = toon.Tint, glow = toon.Glow, life = 0.25, fadeOut = 0.18, lod = lod })
+    local strokes = math.max(2, math.floor(distance / 220))
+    for i = 1, strokes do
+        local k = i / (strokes + 1)
+        local px, py = loc.X + fx * distance * k, loc.Y + fy * distance * k
+        if toon.Dash == "Bolt" or toon.Dash:sub(1, 6) == "Slash_" then
+            -- trait couché le long du trajet (éclair, eau qui file)
+            VFX.Toon.Card(toon.Dash, {
+                x = px, y = py, z = loc.Z - 30, right = { -fy, fx, 0 }, up = { fx, fy, 0.15 },
+                size = 160, aspect = 1.6, glow = toon.Glow * 1.2, life = 0.35, fadeIn = 0.02, fadeOut = 0.22,
+                delay = duration * k * 0.6, priority = i == 1 and "main" or "secondary", lod = lod,
+            })
+        else
+            VFX.Toon.Sprite(toon.Dash, {
+                x = px, y = py, z = loc.Z + (math.random() - 0.5) * 60, size = 110, scale = 0.8, grow = 1.3,
+                glow = toon.Glow, life = 0.45, fadeOut = 0.3, delay = duration * k * 0.6,
+                priority = i == 1 and "main" or "secondary", lod = lod,
+            })
+        end
+    end
+
     -- 3. Traînées sur le corps + lame
     VFX.Trail.Attach(element, caster, "foot_l", { duration = duration, width = 14, core = false, priority = "secondary" })
     VFX.Trail.Attach(element, caster, "foot_r", { duration = duration, width = 14, core = false, priority = "secondary" })
@@ -152,6 +201,13 @@ function VFX.Aura(element, actor, seconds)
     end
     VFX.Trail.Attach(element, actor, "hand_r", { duration = seconds, width = 10, core = false, priority = "detail" })
     VFX.Trail.Attach(element, actor, "hand_l", { duration = seconds, width = 10, core = false, priority = "detail" })
+    -- anneau peint sous les pieds qui suit le personnage + halo
+    local toon = VFX.ToonOf(element)
+    local loc = actor:GetLocation()
+    VFX.Toon.Ground(toon.Ground, loc.X, loc.Y, loc.Z - 88, { size = 240, scale = 0.6, grow = 1.0, spin = 90,
+        color = toon.Tint, glow = toon.Glow, alpha = 0.7, life = seconds, fadeOut = 0.4, follow = actor })
+    VFX.Toon.Sprite("Orb_Soft", { x = loc.X, y = loc.Y, z = loc.Z, size = 220, alpha = 0.35, color = toon.Tint,
+        glow = toon.Glow, life = seconds, fadeOut = 0.4, follow = actor, priority = "secondary" })
     local elapsed = 0
     Timer.SetInterval(function()
         elapsed = elapsed + 450
@@ -182,6 +238,17 @@ function VFX.Zone(element, getCenter, opts)
         VFX.Layers(zone.Core, cx, cy, cz, 0, { scale = scale, life = seconds, priority = "main", lod = lod })
     end
     VFX.Burst.Ring(element, cx, cy, cz, scale)
+
+    -- Forme anime : motif au sol qui tourne + colonne / tornade peinte
+    local toon = VFX.ToonOf(element)
+    VFX.Toon.Ground(toon.Ground, cx, cy, cz - 85, { size = radius * 2.2, scale = 0.3, grow = 1.0,
+        spin = (zone.Spin or 5) * 40, color = toon.Tint, glow = toon.Glow, alpha = 0.85,
+        life = seconds, fadeIn = 0.25, fadeOut = 0.5, priority = "main", follow = opts.follow })
+    if not opts.flat then
+        VFX.Toon.Pillar(toon.Pillar, cx, cy, cz - 85, { radius = radius * 0.8, height = height, count = 3,
+            spin = (zone.Spin or 5) * 60, color = toon.Tint, glow = toon.Glow, alpha = 0.65,
+            life = seconds, fadeOut = 0.5, follow = opts.follow })
+    end
 
     -- Orbites : particules qui tournent en spirale montante
     local orbs = {}

@@ -26,6 +26,7 @@ local MODULE_FILES = {
     -- Effets visuels (VFX) : cœur, identités d'éléments, chorégraphies
     "Systems/VFX/Core/VFXUtils.lua",
     "Systems/VFX/Core/VFXManager.lua",
+    "Systems/VFX/Core/VFXToon.lua",
     "Systems/VFX/Core/VFXSoundCamera.lua",
     "Systems/VFX/Core/VFXTrail.lua",
     "Systems/VFX/Core/VFXBurst.lua",
@@ -33,6 +34,9 @@ local MODULE_FILES = {
     "Systems/VFX/Core/VFXProjectile.lua",
     "Systems/VFX/Elements/Breathing.lua",
     "Systems/VFX/Elements/Others.lua",
+    "Systems/VFX/Elements/Toon.lua",
+    "Systems/VFX/Techniques/Signatures.lua",
+    "Systems/VFX/Techniques/Looks.lua",
     "Systems/VFX/Techniques/Instant.lua",
     "Systems/VFX/Techniques/Water.lua",
     "Systems/VFX/Techniques/Generic.lua",

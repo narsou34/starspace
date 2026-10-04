@@ -56,10 +56,25 @@ function VFX.Impact(element, size, x, y, z, yaw)
     local lod = U.Lod(x, y, z)
     yaw = yaw or 0
 
+    -- 0. Forme anime : étoile d'impact + éclaboussure de l'élément + onde au sol
+    local toon = VFX.ToonOf(element)
+    VFX.Toon.Sprite(toon.Star, { x = x, y = y, z = z + 20, size = 90 * scale, scale = 0.5, grow = 1.6,
+        color = toon.Tint, glow = toon.Glow * 1.4, life = 0.22, fadeIn = 0.01, fadeOut = 0.14, priority = "main", lod = lod })
+    VFX.Toon.Sprite(toon.Splash, { x = x, y = y, z = z + 30 * scale, size = 160 * scale, scale = 0.45, grow = 1.25,
+        color = toon.White, glow = toon.Glow, life = 0.45 + 0.1 * spec.level, fadeIn = 0.02, priority = "main", lod = lod })
+    if spec.level >= 2 then
+        VFX.Toon.Ground(toon.Ring, x, y, z - 85, { size = 260 * scale, color = toon.Tint, glow = toon.Glow,
+            life = 0.5, scale = 0.25, grow = 1.3, lod = lod })
+    end
+    if spec.level >= 3 then
+        VFX.Toon.Scatter(toon.Scatter, x, y, z, { count = 4 + spec.level * 2, spread = 160 * scale, size = 45 * scale,
+            color = toon.White, glow = toon.Glow, lod = lod })
+    end
+
     -- 1. Flash + cœur
     VFX.Burst.Flash(element, x, y, z, scale * 0.8)
     VFX.Layers(impact.Core, x, y, z, yaw, { scale = scale, priority = "main", lod = lod })
-    VFX.Burst.Spray(element, x, y, z + 20, yaw, { count = 35 * spec.count, speed = 550 * scale, lod = lod })
+    VFX.Burst.Spray(element, x, y, z + 20, yaw, { count = 25 * spec.count, speed = 550 * scale, lod = lod, priority = "detail" })
 
     -- 2. Onde + explosion colorée
     if spec.level >= 2 then

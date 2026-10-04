@@ -216,12 +216,16 @@ Client/Systems/VFX/
 │   ├── VFXTrail.lua        VFX_Trail : ruban coloré + fil blanc, sur lame / corps / projectile / trajet
 │   ├── VFXBurst.lua        flash, gerbes, sphères, ondes, rayons, éclairs ; coupes (Slash) et estocs
 │   ├── VFXImpact.lua       VFX_Impact Small / Medium / Large / Massive (+ dégradation si foule)
-│   └── VFXProjectile.lua   VFX_Projectile, élan (Dash), aura, zone persistante, disparition (brume)
+│   ├── VFXProjectile.lua   VFX_Projectile, élan (Dash), aura, zone persistante, disparition (brume)
+│   └── VFXToon.lua         formes "anime" : textures peintes sur cartes 3D / panneaux, pool
 ├── Elements/
 │   ├── Breathing.lua       identités : eau, flamme, soleil, tonnerre, vent, brume, pierre, bête
-│   └── Others.lua          glace, ombre, sang, fleurs, son, insecte, amour, serpent + alias des ids
+│   ├── Others.lua          glace, ombre, sang, fleurs, son, insecte, amour, serpent + alias des ids
+│   └── Toon.lua            textures peintes de chaque élément + pont vers un pack externe
 └── Techniques/
     ├── Instant.lua         techniques instantanées : visuel selon la forme réelle de la zone
+    ├── Signatures.lua      signatures visuelles (pilier de feu, tornade, éclairs, pics de glace...)
+    ├── Looks.lua           look de chaque technique (orientation des coupes, signature...)
     ├── Water.lua           chorégraphies du Souffle de l'Eau
     └── Generic.lua         chorégraphies des scripts combo/bursts/projectiles/buff/dash/zone/whip/beast
 ```
@@ -237,6 +241,43 @@ Client/Systems/VFX/
   détails coupés à 60 %, secondaires à 80 %), `MaxPerTechnique` (100) par technique, LOD par
   distance (1 / 0,6 / 0,35), rien n'est dessiné au-delà de `MaxDistance`, impacts simultanés
   rétrogradés. Réglages dans `Shared/Config/Vfx.lua` (`Quality = "low"` pour les petites machines).
+
+### Formes "anime" peintes (VFXToon)
+
+Les particules du pack par défaut sont génériques : la **forme principale** de chaque
+technique est donc une **texture peinte** (`Client/Textures/*.png`, 44 images générées par
+`Tools/gen_textures.py`) affichée sur des cartes 3D (`SM_Plane`) orientées dans le plan du
+coup, ou sur des panneaux face caméra (`Billboard`), avec le matériau documenté
+`M_Default_Translucent_Unlit` (Texture, Tint lumineux, Opacity animée).
+
+- Croissants de coupe propres à chaque élément (eau ukiyo-e, flammes, éclairs, vent, brume,
+  glace, sang, ombre, pétales, son…), vague d'Hokusai, spirales, tornades, sceaux, étoiles
+  d'impact manga, papillons, pics de glace, bulle d'eau (`SM_Sphere` translucide).
+- **Chaque technique a son look** (`VFX/Techniques/Looks.lua`) : orientation des coupes
+  (horizontale, montante, descendante, diagonale), griffes multiples, ultime géant, tête de
+  projectile, et une **signature** (`VFX/Techniques/Signatures.lua`) : pilier de flammes,
+  Purgatoire, pluie d'éclairs, Honoikazuchi, tornade, typhon, voile de brume, pics de glace,
+  Bodhisattva, sceau de sang, nuit éternelle, tempête de pétales, glycine…
+- Performance : entités réutilisées (pool), plafond `Config.Vfx.Toon.MaxElements`, une seule
+  boucle d'animation (33 ms) active uniquement si quelque chose est affiché.
+- Console du jeu (F1 / touche console) :
+  - `ds_vfxdemo` (ou `ds_vfxdemo water`) : joue la coupe et l'impact de chaque élément devant vous ;
+  - `ds_vfxcalib` : carte de calibration (flèche rouge = devant, barre verte = haut). Si elle est
+    tournée ou à l'envers, régler `Config.Vfx.Toon.UVYaw` (0 / 90 / 180 / -90) ou `FlipV`.
+- Le dossier du package doit s'appeler exactement `demon-slayer-rp` (chemins `package://`).
+
+### Packs de particules externes (qualité maximale)
+
+Pour des effets Niagara de niveau "jeu commercial" (packs anime / magie d'Unreal Fab) :
+1. Installer Unreal Engine **5.7** et l'[ADK nanos world](https://github.com/nanos-world/assets-development-kit)
+   (plugin Forge inclus) — guide : docs nanos world, *Assets Modding > Creating Assets*.
+2. Importer le pack dans un dossier du projet (ex. `Content/DSRP_FX/`), le cuire en Asset Pack.
+3. Copier l'Asset Pack dans `Server/Assets/`, l'ajouter à `assets_requirements` du `Package.toml`.
+4. Déclarer les effets par élément dans `Config.Vfx.CustomPack` (`Shared/Config/Vfx.lua`) :
+   ils s'ajoutent automatiquement aux coupes, impacts, projectiles et zones.
+
+Vérifier la licence du pack (la licence standard Fab autorise l'usage dans un jeu ; pas la
+redistribution des fichiers sources).
 
 ## Ajouter un module (exemple)
 

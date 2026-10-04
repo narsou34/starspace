@@ -109,6 +109,29 @@ local function buildWave(ctx, wave, startMs, travelMs, opts)
             ctx:At(startMs + (opts.rise or 0), function() Vfx.MoveTo(column, ex, ey, ez - 60, travelSec) end)
         end
 
+        -- Forme anime : grandes vagues peintes (Hokusai) qui avancent avec le mur d'eau
+        local cards = math.max(2, math.min(5, math.floor(count / 1.5)))
+        for i = 1, cards do
+            local lateral = (i - 1) / math.max(1, cards - 1) - 0.5
+            local sx, sy, sz = ctx:Point(wave.StartDistance, lateral * wave.StartWidth, opts.baseZ)
+            local ex, ey, ez = ctx:Point(wave.Distance, lateral * wave.EndWidth, opts.baseZ)
+            local size = 260 * opts.scale * (1 - math.abs(lateral) * 0.4)
+            VFX.Toon.Wall("Wave_Curl", sx, sy, sz + size * 0.35, ctx.yaw, {
+                size = size, life = life, fadeIn = 0.15, fadeOut = 0.45, scale = opts.rise and 0.35 or 0.8, grow = 1.15,
+                mirror = (i % 2 == 0), moveTo = { ex, ey, ez + size * 0.45 }, moveTime = travelSec + (opts.rise or 0) / 1000,
+                delay = (opts.rise or 0) / 4000, priority = i <= 3 and "main" or "secondary",
+            })
+        end
+        for _, side in ipairs({ -0.5, 0.5 }) do
+            -- profils de vague sur les côtés (lisibles depuis les côtés)
+            local sx, sy, sz = ctx:Point(wave.StartDistance, side * wave.StartWidth, opts.baseZ)
+            local ex, ey, ez = ctx:Point(wave.Distance, side * wave.EndWidth, opts.baseZ)
+            VFX.Toon.Wall("Wave_Curl", sx, sy, sz + 90 * opts.scale, ctx.yaw, {
+                sideways = true, size = 240 * opts.scale, life = life, fadeIn = 0.15, fadeOut = 0.45, scale = 0.6, grow = 1.1,
+                moveTo = { ex, ey, ez + 110 * opts.scale }, moveTime = travelSec + (opts.rise or 0) / 1000, priority = "secondary",
+            })
+        end
+
         -- Onde au sol au point de départ
         local rx, ry, rz = ctx:Point(wave.StartDistance, 0, opts.baseZ - 80)
         Vfx.Spawn(FX.Ring, rx, ry, rz, { scale = opts.scale * 0.8, life = 1.2, priority = "main" })
@@ -194,7 +217,12 @@ Choreo.Register("water_vortex", {
         ctx:At(tl.WindupMs, function()
             if ctx.isLocal then CamFx.Fov(tech.Camera.Fov, tech.Camera.DurationMs) end
             -- Colonne du vortex : plusieurs couches superposées
-            Vfx.Spawn(FX.Storm, cx, cy, cz + 60, { scale = Vector(2.2, 2.2, 2.6), life = activeSec, priority = "main" })
+            -- Forme anime : spirale au sol + tornade d'eau peinte
+            VFX.Toon.Ground("Spiral", cx, cy, cz, { size = v.Radius * 2.4, color = { 0.3, 0.75, 1.0 }, glow = 1.6,
+                life = activeSec, spin = 420, scale = 0.3, grow = 1.0, alpha = 0.9, priority = "main" })
+            VFX.Toon.Pillar("Swirl_Band", cx, cy, cz, { radius = v.Radius * 0.75, height = v.Height, count = 4, spin = 520,
+                color = { 0.35, 0.8, 1.0 }, glow = 1.6, alpha = 0.8, life = activeSec, scale = 0.4, grow = 1.0 })
+            Vfx.Spawn(FX.Storm, cx, cy, cz + 60, { scale = Vector(2.2, 2.2, 2.6), life = activeSec, priority = "secondary" })
             Vfx.Spawn(FX.Wind, cx, cy, cz + 260, { scale = Vector(1.8, 1.8, 2.2), life = activeSec, priority = "main" })
             Vfx.Spawn(FX.Fountain, cx, cy, cz, { scale = 1.6, life = activeSec })
             Vfx.Spawn(FX.MistHeavy, cx, cy, cz + 20, { scale = 1.4, life = activeSec + 1, priority = "detail" })
@@ -296,7 +324,10 @@ Choreo.Register("water_prison", {
             if target and target:IsValid() then
                 local seconds = prison.DurationMs / 1000
                 -- Bulle : sphère d'eau géante + courant interne + gouttelettes
-                Vfx.Attach(FX.Orb, target, "pelvis", { scale = 2.6, life = seconds, priority = "main" })
+                VFX.Toon.Bubble(target, { radius = 130, life = seconds, color = { 0.35, 0.8, 1.0 }, alpha = 0.38 })
+                VFX.Toon.Ground("Ring_Broken", x, y, z - 85, { size = 320, color = { 0.4, 0.85, 1.0 }, glow = 1.5,
+                    life = seconds, spin = 60, scale = 0.6, grow = 1.0, follow = target })
+                Vfx.Attach(FX.Orb, target, "pelvis", { scale = 2.6, life = seconds, priority = "secondary" })
                 Vfx.Attach(FX.Storm, target, "pelvis", { scale = 1.1, life = seconds, priority = "main" })
                 Vfx.Attach(FX.Droplets, target, "pelvis", { life = seconds, priority = "detail" })
                 Sfx.Play(SFX.Roar, x, y, z, { volume = 0.2, pitch = 1.6, life = seconds, fadeOut = 0.5, attach = target })
@@ -475,6 +506,9 @@ Choreo.Register("water_dragon", {
                 Sfx.Play(SFX.Roar, sx, sy, sz, { volume = 0.35, pitch = 0.5, life = travelSec, fadeOut = 0.5, attach = head, falloff = 7000 })
             end
             segments[0] = { head, core }
+            -- tête peinte : vague enroulée qui suit la tête du dragon
+            ctx.data.headCard = VFX.Toon.Sprite("Wave_Curl", { x = sx, y = sy, z = sz, size = 360, life = life,
+                fadeIn = 0.05, fadeOut = 0.2, priority = "main" })
 
             -- Corps : segments de plus en plus fins, décalés dans le temps
             for k = 1, count do
@@ -498,13 +532,24 @@ Choreo.Register("water_dragon", {
                 if p >= 0 then
                     local x, y, z = pathPoint(math.min(p, 1))
                     for _, particle in ipairs(parts) do Vfx.MoveTo(particle, x, y, z, STEP / 1000) end
+                    if k == 0 then VFX.Toon.Place(ctx.data.headCard, x, y, z + 60, STEP / 1000) end
                 end
             end
         end)
 
         -- Gouttes et brume arrachées au passage de la tête
         ctx:Every(tl.WindupMs, tl.WindupMs + tl.TravelMs, 150, function(_, elapsed)
-            local x, y, z = pathPoint((elapsed - tl.WindupMs) / tl.TravelMs)
+            local p = (elapsed - tl.WindupMs) / tl.TravelMs
+            local x, y, z = pathPoint(p)
+            -- Corps du dragon : écailles d'eau peintes orientées le long de la trajectoire
+            local nx, ny, nz = pathPoint(math.min(1, p + 0.04))
+            local len = math.max(1, math.sqrt((nx - x) ^ 2 + (ny - y) ^ 2))
+            VFX.Toon.Card("Slash_Water", { x = x, y = y, z = z, right = { nx - x, ny - y, nz - z },
+                up = { -(ny - y) / len, (nx - x) / len, 1.0 }, size = 340, life = 0.9, fadeIn = 0.03, fadeOut = 0.55,
+                scale = 0.8, grow = 1.0, priority = "main" })
+            VFX.Toon.Card("Slash_Water", { x = x, y = y, z = z, right = { nx - x, ny - y, nz - z },
+                up = { (ny - y) / len, -(nx - x) / len, 1.0 }, size = 300, life = 0.8, fadeIn = 0.03, fadeOut = 0.5,
+                scale = 0.8, grow = 1.0, priority = "secondary" })
             Vfx.Spawn(FX.SplashSoft, x, y, z - 80, { scale = 0.8, life = 1.0, priority = "secondary" })
             Vfx.Spawn(FX.Impact, x, y, ctx.origin.z - 85, { scale = 0.9, life = 1.0, priority = "detail" })
             Vfx.Spawn(FX.Mist, x, y, z - 120, { scale = 0.9, life = 2.2, priority = "detail" })

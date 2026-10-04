@@ -23,6 +23,38 @@ local TMath = DS.TechMath
 -- ---------------------------------------------------------------------------
 
 local function fxOf(ctx) return ctx.tech.Fx or {} end
+local function lookOf(ctx) return VFX.LookOf(ctx.tech) end
+
+-- Signatures d'élan jouées au DÉPART (traits le long du trajet) ; les autres à l'arrivée
+local DASH_AT_START = { fire_line = true, bolt_line = true, thunder_god = true, mist_veil = true, ink_veil = true, butterflies = true }
+
+--[[
+    Coupe selon le look de la technique : orientation du croissant (Planes),
+    taille (Scale), croissants parallèles (Multi, griffes), ultime (Big).
+]]
+local function lookSlash(ctx, index, opts)
+    local look = lookOf(ctx)
+    opts = opts or {}
+    opts.plane = opts.plane or VFX.PlaneOf(look, index)
+    opts.scale = (opts.scale or 1) * (look.Scale or 1) * (look.Big and 1.35 or 1)
+    opts.big = opts.big or look.Big
+    opts.lod = opts.lod or ctx.lod
+    local multi = look.Multi or 1
+    if multi <= 1 then
+        VFX.Slash(ctx.element, ctx.caster, opts)
+        return
+    end
+    local x, y, z, yaw = ctx:CasterTransform()
+    local fx, fy = TMath.Forward(yaw)
+    for m = 1, multi do
+        local side = (m - (multi + 1) / 2) * 55
+        local px, py, pz = TMath.Point(x, y, z, fx, fy, 0, side, (m - 1) * 8)
+        local copy = {}
+        for k, v in pairs(opts) do copy[k] = v end
+        copy.x, copy.y, copy.z, copy.yaw = px, py, pz, yaw
+        Timer.SetTimeout(function() VFX.Slash(ctx.element, ctx.caster, copy) end, (m - 1) * 35)
+    end
+end
 
 local function attachLayers(layers, actor, seconds)
     for _, layer in ipairs(layers or {}) do
@@ -35,6 +67,13 @@ end
 -- Préparation : couches de lancement, cercle d'élément, sons, caméra du lanceur
 local function cast(ctx)
     local fx, o = fxOf(ctx), ctx.origin
+    local look = lookOf(ctx)
+    if look.OnRelease then
+        ctx:At(ctx.tech.Timeline.WindupMs, function()
+            local x, y, z = ctx:CasterTransform()
+            VFX.PlaySignature(look.OnRelease, ctx, x, y, z)
+        end)
+    end
     VFX.Layers(fx.Cast, o.x, o.y, o.z - 60, ctx.yaw, { priority = "main", lod = ctx.lod })
     VFX.Sound.Set(fx.CastSounds, o.x, o.y, o.z)
     if ctx.tech.Caster then
@@ -63,6 +102,7 @@ end
 
 local function onBurst(ctx, x, y, z, size)
     local fx = fxOf(ctx)
+    VFX.PlaySignature(lookOf(ctx).OnBurst, ctx, x, y, z)
     VFX.Impact(ctx.element, size or "Large", x, y, z, ctx.yaw)
     VFX.Layers(fx.Burst, x, y, z, ctx.yaw, { priority = "main", lod = ctx.lod })
     VFX.Sound.Set(fx.BurstSounds, x, y, z)
@@ -86,14 +126,14 @@ VFX.RegisterChoreography("combo", {
                 local swing = (i % 2 == 0) and -1 or 1
                 ctx:BladeTrail(combo.IntervalMs + 200)
                 if combo.Shape == "circle" then
-                    VFX.Slash(ctx.element, ctx.caster, { radius = math.max(160, combo.Range * 0.55), from = i * 40,
-                        to = i * 40 + 330 * swing, upFrom = 80, upTo = 40, duration = math.min(0.2, combo.IntervalMs / 1000), lod = ctx.lod })
+                    lookSlash(ctx, i, { radius = math.max(160, combo.Range * 0.55), from = i * 40,
+                        to = i * 40 + 330 * swing, upFrom = 80, upTo = 40, duration = math.min(0.2, combo.IntervalMs / 1000) })
                 elseif combo.Shape == "line" then
                     VFX.Thrust(ctx.element, x, y, z, yaw + swing * 4, combo.Range, { width = combo.Width and combo.Width / 8 or 20, lod = ctx.lod })
                 else
                     local half = math.min((combo.Angle or 90) / 2 + 10, 100)
-                    VFX.Slash(ctx.element, ctx.caster, { radius = math.max(150, combo.Range * 0.45), from = -half * swing,
-                        to = half * swing, upFrom = 60 + 50 * swing, upTo = 60 - 50 * swing, lod = ctx.lod })
+                    lookSlash(ctx, i, { radius = math.max(150, combo.Range * 0.45), from = -half * swing,
+                        to = half * swing, upFrom = 60 + 50 * swing, upTo = 60 - 50 * swing })
                 end
                 local fwdX, fwdY = TMath.Forward(yaw)
                 local reach = combo.Shape == "circle" and 0 or combo.Range * 0.5
@@ -113,7 +153,7 @@ VFX.RegisterChoreography("bursts", {
         cast(ctx)
         ctx:At(ctx.tech.Timeline.WindupMs - 80, function()
             ctx:BladeTrail(500)
-            VFX.Slash(ctx.element, ctx.caster, { radius = 210, from = -50, to = 50, upFrom = 220, upTo = -40, width = 60, lod = ctx.lod })
+            lookSlash(ctx, 1, { radius = 210, from = -50, to = 50, upFrom = 220, upTo = -40, width = 60 })
         end)
         for _, burst in ipairs(TMath.BurstList(ctx.tech.Bursts)) do
             ctx:At(ctx.tech.Timeline.WindupMs + burst.delay, function()
@@ -137,7 +177,7 @@ VFX.RegisterChoreography("projectiles", {
         ctx.data.shots = {}
         ctx:At(ctx.tech.Timeline.WindupMs - 60, function()
             ctx:BladeTrail(450)
-            VFX.Slash(ctx.element, ctx.caster, { radius = 160, from = 70, to = -40, upFrom = 140, upTo = 60, lod = ctx.lod })
+            lookSlash(ctx, 1, { radius = 160, from = 70, to = -40, upFrom = 140, upTo = 60 })
         end)
         ctx:At(ctx.tech.Timeline.WindupMs, function()
             for i = 1, pr.Count do
@@ -146,6 +186,7 @@ VFX.RegisterChoreography("projectiles", {
                 local sx, sy, sz = ctx:Point(pr.SpawnForward or 100, 0, pr.SpawnHeight or 40)
                 local shot = VFX.Projectile(ctx.element, { sx, sy, sz }, math.deg(math.atan(dy, dx)), {
                     speed = pr.Speed, distance = pr.MaxDistance, core = fx.Body, scale = pr.Radius >= 150 and 1.4 or 1,
+                    orb = lookOf(ctx).Orb, orbSize = lookOf(ctx).OrbSize,
                 })
                 if shot:Head() then attachLayers(fx.Attach, shot:Head(), pr.MaxDistance / pr.Speed) end
                 ctx.data.shots[i] = shot
@@ -208,13 +249,20 @@ local function dashes(ctx, count, interval, offsets, distance)
             local x, y, z, yaw = ctx:CasterTransform()
             yaw = yaw + (offsets and offsets[i] or 0)
             VFX.Dash(ctx.element, ctx.caster, { yaw = yaw, distance = distance, duration = (interval + 250) / 1000 })
+            local look = lookOf(ctx)
+            if look.OnDash and DASH_AT_START[look.OnDash] then VFX.PlaySignature(look.OnDash, ctx, x, y, z) end
             attachLayers(fx.Attach, ctx.caster, (interval + 300) / 1000)
             VFX.Layers(fx.Body, x, y, z, yaw, { priority = "secondary", lod = ctx.lod })
             VFX.Sound.Set(fx.Strike, x, y, z)
         end)
         ctx:At(ctx.tech.Timeline.WindupMs + (i - 1) * interval + math.min(200, interval * 0.7), function()
             local swing = (i % 2 == 0) and -1 or 1
-            VFX.Slash(ctx.element, ctx.caster, { radius = 170, from = -80 * swing, to = 80 * swing, lod = ctx.lod })
+            lookSlash(ctx, i, { radius = 170, from = -80 * swing, to = 80 * swing })
+            local look = lookOf(ctx)
+            if look.OnDash and not DASH_AT_START[look.OnDash] then
+                local x, y, z = ctx:CasterTransform()
+                VFX.PlaySignature(look.OnDash, ctx, x, y, z)
+            end
         end)
     end
 end
@@ -250,11 +298,12 @@ VFX.RegisterChoreography("zone", {
             ctx:BladeTrail(600)
             local x, y, z = ctx:CasterTransform()
             if zone.Follow then
-                VFX.Slash(ctx.element, ctx.caster, { radius = 200, from = 0, to = 350, upFrom = 60, upTo = 60, duration = 0.25 })
+                lookSlash(ctx, 1, { radius = 200, from = 0, to = 350, upFrom = 60, upTo = 60, duration = 0.25 })
             else
-                VFX.Slash(ctx.element, ctx.caster, { radius = 190, from = -70, to = 70, lod = ctx.lod })
+                lookSlash(ctx, 1, { radius = 190, from = -70, to = 70 })
             end
             VFX.Zone(ctx.element, center, {
+                flat = lookOf(ctx).FlatZone,
                 radius = zone.Radius, height = zone.Height, seconds = zone.DurationMs / 1000,
                 follow = zone.Follow and ctx.caster or nil, orbit = (fx.Orbit and fx.Orbit.Count) or 6,
             })
@@ -305,6 +354,10 @@ VFX.RegisterChoreography("whip", {
                 parts[#parts + 1] = VFX.Trail.Ribbon(ctx.element, x, y, z, { duration = seconds + 0.6, width = whip.Radius * 0.35, trailLife = 0.45 })
                 parts[#parts + 1] = VFX.Trail.Ribbon(ctx.element, x, y, z, { duration = seconds + 0.6, width = whip.Radius * 0.1, trailLife = 0.3, color = "Highlight", glow = 1.5, priority = "secondary" })
                 if parts[1] then attachLayers(fx.Attach, parts[1], seconds) end
+                -- tête peinte qui suit le fouet
+                local toon = VFX.ToonOf(ctx.element)
+                parts.toon = VFX.Toon.Sprite("Orb_Soft", { x = x, y = y, z = z, size = whip.Radius * 1.6, color = toon.Tint,
+                    glow = toon.Glow * 1.3, life = seconds + 0.1, fadeOut = 0.15, priority = "main", lod = ctx.lod })
                 heads[head] = parts
             end
         end)
@@ -313,6 +366,19 @@ VFX.RegisterChoreography("whip", {
             for head, parts in pairs(heads) do
                 local x, y, z = ctx:Point(TMath.WhipAt(math.min(p, 1), whip, head))
                 for _, particle in ipairs(parts) do VFX.MoveTo(particle, x, y, z, STEP / 1000) end
+                VFX.Toon.Place(parts.toon, x, y, z, STEP / 1000)
+                -- rémanence : croissants de l'élément laissés le long du fouet
+                if math.floor(elapsed / STEP) % 2 == 0 then
+                    local toon = VFX.ToonOf(ctx.element)
+                    local p2 = math.min(p + 0.05, 1)
+                    local nx, ny = ctx:Point(TMath.WhipAt(p2, whip, head))
+                    local dx, dy = nx - x, ny - y
+                    if dx * dx + dy * dy > 1 then
+                        VFX.Toon.Card(toon.Slash, { x = x, y = y, z = z, right = { dx, dy, 0 }, up = { -dy / math.sqrt(dx * dx + dy * dy), dx / math.sqrt(dx * dx + dy * dy), 0.8 },
+                            size = whip.Radius * 2.4, life = 0.45, fadeIn = 0.02, fadeOut = 0.3, scale = 0.8, grow = 1.0,
+                            glow = toon.Glow, priority = "secondary", lod = ctx.lod })
+                    end
+                end
                 if parts[1] and parts[1]:IsValid() then
                     local loc = parts[1]:GetLocation()
                     VFX.Burst.Spray(ctx.element, loc.X, loc.Y, loc.Z, ctx.yaw + 180, { count = 8, speed = 250, life = 0.5, priority = "detail", lod = ctx.lod })
@@ -337,7 +403,7 @@ VFX.RegisterChoreography("beast", {
         local function pathPoint(p) return ctx:Point(TMath.DragonAt(p, beast)) end
         ctx:At(tl.WindupMs, function()
             ctx:BladeTrail(900)
-            VFX.Slash(ctx.element, ctx.caster, { radius = 240, from = 90, to = -90, upFrom = 40, upTo = 200, width = 70, duration = 0.18 })
+            lookSlash(ctx, 1, { radius = 240, from = 90, to = -90, upFrom = 40, upTo = 200, width = 70, duration = 0.18 })
             VFX.Sound.Set(fx.Strike, ctx.origin.x, ctx.origin.y, ctx.origin.z)
             local sx, sy, sz = pathPoint(0)
             local head = VFX.Layers(fx.Body or ctx.element.Projectile.Core, sx, sy, sz, ctx.yaw,
@@ -362,8 +428,16 @@ VFX.RegisterChoreography("beast", {
             end
         end)
         ctx:Every(tl.WindupMs, tl.WindupMs + tl.TravelMs, 140, function(_, elapsed)
-            local x, y, z = pathPoint((elapsed - tl.WindupMs) / tl.TravelMs)
-            VFX.Burst.Spray(ctx.element, x, y, z - 60, ctx.yaw + 180, { count = 14, speed = 400, priority = "detail", lod = ctx.lod })
+            local p = (elapsed - tl.WindupMs) / tl.TravelMs
+            local x, y, z = pathPoint(p)
+            -- corps de la créature : croissants peints orientés le long du trajet
+            local nx, ny, nz = pathPoint(math.min(1, p + 0.04))
+            local toon = VFX.ToonOf(ctx.element)
+            local len = math.max(1, math.sqrt((nx - x) ^ 2 + (ny - y) ^ 2))
+            VFX.Toon.Card(toon.Slash, { x = x, y = y, z = z, right = { nx - x, ny - y, nz - z }, up = { -(ny - y) / len, (nx - x) / len, 1.0 },
+                size = 260, life = 0.7, fadeIn = 0.03, fadeOut = 0.45, scale = 0.7, grow = 1.0, glow = toon.Glow,
+                priority = "main", lod = ctx.lod })
+            VFX.Burst.Spray(ctx.element, x, y, z - 60, ctx.yaw + 180, { count = 10, speed = 400, priority = "detail", lod = ctx.lod })
             VFX.Layers(fx.Trail or (ctx.element.Impact and ctx.element.Impact.Linger), x, y, z - 80, ctx.yaw, { priority = "detail", lod = ctx.lod })
         end)
     end,
@@ -371,5 +445,52 @@ VFX.RegisterChoreography("beast", {
         if event == "impact" then onBurst(ctx, x, y, z, "Massive") elseif event == "hit" then onHit(ctx, x, y, z) end
     end,
 })
+
+-- ---------------------------------------------------------------------------
+-- Démarrage : préchargement des textures + commandes de la console du jeu
+-- ---------------------------------------------------------------------------
+
+local function localTransform()
+    local player = Client.GetLocalPlayer()
+    local character = player and player:GetControlledCharacter()
+    if not (character and character:IsValid()) then return nil end
+    local loc = character:GetLocation()
+    return character, loc.X, loc.Y, loc.Z, character:GetRotation().Yaw
+end
+
+function GenericVfx:Start()
+    VFX.Toon.Preload()
+
+    -- Carte de calibration : flèche ROUGE = avant (doit pointer devant vous),
+    -- barre VERTE = haut (doit être en haut / vers le ciel).
+    Console.RegisterCommand("ds_vfxcalib", function()
+        local character, x, y, z, yaw = localTransform()
+        if not character then return end
+        local fx, fy = TMath.Forward(yaw)
+        VFX.Toon.Card("Calibration", { x = x + fx * 250, y = y + fy * 250, z = z + 60,
+            right = { fx, fy, 0 }, up = { 0, 0, 1 }, size = 200, life = 8, glow = 1, priority = "main" })
+        VFX.Toon.Card("Calibration", { x = x + fx * 250, y = y + fy * 250, z = z - 85,
+            right = { fx, fy, 0 }, up = { -fy, fx, 0 }, size = 200, life = 8, glow = 1, priority = "main" })
+        Chat.AddMessage("<cyan>[DSRP]</> Calibration : fleche rouge = devant, barre verte = haut (mur) / gauche (sol).")
+    end, "Affiche la carte de calibration des VFX anime")
+
+    -- Démonstration sans combat : croissant + impact de chaque élément devant soi
+    Console.RegisterCommand("ds_vfxdemo", function(id)
+        local character, x, y, z, yaw = localTransform()
+        if not character then return end
+        local ids = id and id ~= "" and { id } or { "water", "flame", "sun", "thunder", "wind", "mist", "stone", "beast",
+            "ice", "shadow", "blood", "flower", "sound", "insect", "love", "serpent" }
+        local planes = { "flat", "rising", "falling", "diagonal", "diagonal2", "tilted" }
+        for i, elementId in ipairs(ids) do
+            Timer.SetTimeout(function()
+                local element = VFX.Element(elementId)
+                VFX.Slash(element, character, { radius = 200, plane = planes[(i - 1) % #planes + 1] })
+                local fx, fy = TMath.Forward(yaw)
+                Timer.SetTimeout(function() VFX.Impact(element, "Large", x + fx * 400, y + fy * 400, z) end, 250)
+                Chat.AddMessage("<cyan>[DSRP]</> VFX : " .. elementId)
+            end, (i - 1) * 1300)
+        end
+    end, "Joue le croissant et l'impact de chaque element (ou d'un seul : ds_vfxdemo water)")
+end
 
 return GenericVfx

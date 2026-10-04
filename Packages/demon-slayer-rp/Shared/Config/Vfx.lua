@@ -1,7 +1,7 @@
 --[[
     Demon Slayer RP - Effets visuels, sons et caméra (réglages client)
     ------------------------------------------------------------------
-    Garde-fous de performance appliqués par Client/Systems/Fx/.
+    Garde-fous de performance appliqués par Client/Systems/VFX/.
 ]]
 
 Config.Vfx = {
@@ -24,4 +24,22 @@ Config.Vfx = {
     CameraEffects = true,
     MaxFovDelta = 18,
     MaxArmLengthDelta = 350,
+
+    -- Formes "anime" : textures peintes (Client/Textures) sur des cartes 3D et des
+    -- panneaux face caméra (Client/Systems/VFX/Core/VFXToon.lua)
+    Toon = {
+        Enabled = true,
+        MaxElements = 70,      -- cartes / panneaux affichés en même temps (plafond strict)
+        Glow = 1.6,            -- éclat (> 1 = lumineux, bloom)
+        -- Si les croissants apparaissent tournés ou à l'envers en jeu : console du jeu
+        -- "ds_vfxcalib" (flèche rouge = avant, barre verte = haut) puis ajuster ici.
+        UVYaw = 0,             -- rotation de la texture sur la carte (0, 90, 180, -90)
+        FlipV = false,         -- inverse le haut et le bas de la texture
+    },
+
+    -- Pack de particules externe (Niagara importé avec l'ADK nanos world) : effets
+    -- ajoutés par élément. Voir README, section "Packs de particules externes".
+    --   water = { Slash = "mon-pack::P_WaterSlash", Impact = "mon-pack::P_WaterHit",
+    --             Projectile = "mon-pack::P_WaterBall", Zone = "mon-pack::P_Whirlpool", Scale = 1 },
+    CustomPack = {},
 }
