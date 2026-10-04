@@ -53,6 +53,14 @@ function VFX.Impact(element, size, x, y, z, yaw)
     end
     local impact = element.Impact or {}
     local scale = spec.scale
+
+    -- Pack Niagara installé : NS_VFX_<Élément>_Impact (+ NS_Impact_Large / Massive)
+    if VFX.Pack.Enabled() and VFX.Pack.Impact(element, BY_LEVEL[spec.level], x, y, z, yaw) then
+        local sounds = element.Sounds or {}
+        VFX.Sound.Set(sounds.Impact, x, y, z, { volume = math.min(1.2, 0.6 + scale * 0.25) })
+        if spec.level >= 3 then VFX.Sound.Set(sounds.Big, x, y, z, { falloff = 7000 }) end
+        return
+    end
     local lod = U.Lod(x, y, z)
     yaw = yaw or 0
 

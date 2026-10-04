@@ -276,6 +276,13 @@ Pour des effets Niagara de niveau "jeu commercial" (packs anime / magie d'Unreal
 4. Déclarer les effets par élément dans `Config.Vfx.CustomPack` (`Shared/Config/Vfx.lua`) :
    ils s'ajoutent automatiquement aux coupes, impacts, projectiles et zones.
 
+**Pack Niagara Demon Slayer (recommandé)** : le kit `DemonSlayerVFX/` à la racine du dépôt contient
+toutes les sources, le script Unreal qui construit le projet, les recettes Niagara et l'`Assets.toml`
+du pack `demonslayer-vfx`. Une fois cuit et installé, `Config.Vfx.Pack.Enabled = true` : chaque coupe,
+traînée, impact, projectile, élan, zone, vague, tornade et dragon joue le `NS_VFX_*` de l'élément
+(`Client/Systems/VFX/Core/VFXPack.lua`, table `Shared/Config/VfxPackCatalog.lua`). Console du jeu :
+`ds_vfxpack on|off`.
+
 Vérifier la licence du pack (la licence standard Fab autorise l'usage dans un jeu ; pas la
 redistribution des fichiers sources).
 

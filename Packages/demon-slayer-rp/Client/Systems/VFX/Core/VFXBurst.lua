@@ -140,6 +140,26 @@ function VFX.Slash(element, caster, opts)
     local upFrom, upTo = opts.upFrom or 110, opts.upTo or 10
     local points = U.ArcPoints(x, y, z, yaw, radius, from, to, 8, upFrom, upTo)
 
+    -- 0. Pack Niagara installé : NS_VFX_<Élément>_Slash orienté dans le plan du coup
+    if VFX.Pack.Enabled() then
+        local dz = upTo - upFrom
+        local swingSign = (to >= from) and 1 or -1
+        local plane = opts.plane or ((math.abs(to - from) >= 300) and "flat" or (dz > 120 and "rising") or (dz < -160 and "falling")
+            or (math.abs(dz) > 60 and ((dz > 0) and "diagonal" or "diagonal2")) or "tilted")
+        local ROLL = { flat = 0, tilted = 20, rising = 90, falling = -90, diagonal = 45, diagonal2 = -45 }
+        local roll = (ROLL[plane] or 0) * swingSign + (swingSign < 0 and 180 or 0)
+        local mid = yaw + (from + to) / 2 * ((math.abs(to - from) >= 300) and 0 or 0.35)
+        local fxm, fym = TMath.Forward(mid)
+        local particle = VFX.Pack.Play("Slash", element, x, y, z + (opts.height or 45), {
+            yaw = mid, roll = roll, scale = radius / 180 * (opts.big and 1.5 or 1), duration = 1 + duration,
+            width = opts.width or 40, direction = { fxm, fym, 0 }, lod = lod, life = 1.5,
+        })
+        if particle then
+            VFX.Sound.Set(element.Sounds and element.Sounds.Slash, x, y, z)
+            return
+        end
+    end
+
     -- 1. Forme principale : croissant peint
     local toon = VFX.ToonOf(element)
     local plane = opts.plane

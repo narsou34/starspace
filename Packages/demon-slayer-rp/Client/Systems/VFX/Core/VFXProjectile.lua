@@ -54,6 +54,19 @@ function VFX.Projectile(element, start, yaw, opts)
     local endX, endY, endZ = start[1] + fx * distance, start[2] + fy * distance, start[3]
 
     local handle = setmetatable({ element = element, yaw = yaw, alive = true, parts = {} }, Handle)
+
+    -- Pack Niagara installé : le système projectile vole réellement jusqu'au bout de la trajectoire
+    local packed = VFX.Pack.Play("Projectile", element, start[1], start[2], start[3], {
+        yaw = yaw, scale = scale, speed = speed / 2000, direction = { fx, fy, 0 }, endPoint = { endX, endY, endZ },
+        life = flight + 0.6, lod = lod,
+    })
+    if packed then
+        handle.parts = { packed }
+        VFX.MoveTo(packed, endX, endY, endZ, flight)
+        VFX.Sound.Set(element.Sounds and element.Sounds.Projectile, start[1], start[2], start[3], { attach = packed })
+        Timer.SetTimeout(function() handle.alive = false end, math.floor(flight * 1000) + 100)
+        return handle
+    end
     handle.parts = VFX.Layers(opts.core or spec.Core, start[1], start[2], start[3], yaw,
         { scale = scale, life = flight + 0.1, priority = "main", lod = lod })
     for _, particle in ipairs(handle.parts) do VFX.MoveTo(particle, endX, endY, endZ, flight) end
@@ -124,6 +137,18 @@ function VFX.Dash(element, caster, opts)
     local fx, fy = TMath.Forward(yaw)
     local lod = U.Lod(loc.X, loc.Y, loc.Z)
     local dash = element.Dash or {}
+
+    -- Pack Niagara installé : NS_VFX_<Élément>_Dash du départ au point d'arrivée
+    local packedDash = VFX.Pack.Play("Dash", element, loc.X, loc.Y, loc.Z, {
+        yaw = yaw, direction = { fx, fy, 0 }, endPoint = { loc.X + fx * distance, loc.Y + fy * distance, loc.Z },
+        duration = duration / 0.6, life = duration + 1, lod = lod,
+    })
+    if packedDash then
+        if dash.Vanish then VFX.Vanish(caster, dash.Vanish) end
+        VFX.Trail.Blade(element, caster, duration)
+        VFX.Sound.Set(element.Sounds and element.Sounds.Dash, loc.X, loc.Y, loc.Z)
+        return
+    end
 
     -- 1. Flash de départ + gerbe vers l'arrière
     VFX.Burst.Flash(element, loc.X, loc.Y, loc.Z, 0.8)
@@ -229,6 +254,18 @@ function VFX.Zone(element, getCenter, opts)
     local cx, cy, cz = getCenter()
     local lod = U.Lod(cx, cy, cz)
     local scale = radius / 400
+
+    -- Pack Niagara installé : NS de zone (tornade, vortex, brume, aura...) qui suit si besoin
+    local packedZone
+    if opts.follow and opts.follow:IsValid() then
+        packedZone = VFX.Pack.Attach("Zone", element, opts.follow, "", seconds + 0.3, { scale = scale, duration = seconds / 2.5, lod = lod })
+    else
+        packedZone = VFX.Pack.Play("Zone", element, cx, cy, cz, { scale = scale, duration = seconds / 2.5, life = seconds + 1, lod = lod })
+    end
+    if packedZone then
+        VFX.Sound.Set(element.Sounds and element.Sounds.Loop, cx, cy, cz, { attach = opts.follow })
+        return
+    end
 
     if opts.follow and opts.follow:IsValid() then
         for _, layer in ipairs(zone.Core or {}) do

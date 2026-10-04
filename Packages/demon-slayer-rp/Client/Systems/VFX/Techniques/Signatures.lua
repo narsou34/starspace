@@ -261,8 +261,29 @@ function Sig.rocks(ctx, x, y, z)
     Toon.Ground("Ring_Broken", x, y, z - 88, { size = 420, color = { 0.85, 0.75, 0.6 }, glow = 1.2, life = 0.7, scale = 0.3, grow = 1.2 })
 end
 
+-- Pack Niagara : système dédié qui remplace la signature (rôle, taille, durée)
+local SIG_PACK = {
+    tiger_roar = { "Dragon", 1.0 }, inferno = { "Explosion", 1.6 }, fire_pillar = { "Burst", 1.0 }, fire_line = { "Dash", 1.0 },
+    sun_seal = { "Burst", 1.2 }, thunder_god = { "Explosion", 1.6 }, bolt_rain = { "Burst", 1.0 }, bolt_ring = { "Burst", 1.0 },
+    bolt_line = { "Dash", 1.0 }, tornado = { "Tornado", 1.0 }, typhoon = { "Tornado", 2.2 }, mist_veil = { "Zone", 0.6 },
+    mist_dome = { "Zone", 1.6 }, ice_spikes = { "Spikes", 1.0 }, ice_bodhisattva = { "Explosion", 1.8 },
+    blood_burst = { "Burst", 1.0 }, blood_awakening = { "Zone", 1.0 }, ink_veil = { "Zone", 0.6 }, eternal_night = { "Zone", 1.8 },
+    bloom = { "Burst", 1.0 }, petal_storm = { "Zone", 1.2 }, butterflies = { "Burst", 0.6 }, wisteria = { "Zone", 1.6 },
+    sound_rings = { "Burst", 1.0 }, score = { "Zone", 1.0 }, rocks = { "Impact", 1.2 },
+}
+
 --- Joue une signature par son nom (sans erreur si elle n'existe pas).
+--- Avec le pack Niagara installé, le système dédié de l'élément la remplace.
 function VFX.PlaySignature(name, ctx, x, y, z, opts)
+    local packed = name and SIG_PACK[name]
+    if packed and VFX.Pack.Enabled() then
+        local fx, fy = ctx.fx or 1, ctx.fy or 0
+        local dist = (opts and opts.length) or 900
+        if VFX.Pack.Play(packed[1], ctx.element, x, y, z, { yaw = ctx.yaw, scale = packed[2], direction = { fx, fy, 0 },
+                endPoint = { x + fx * dist, y + fy * dist, z }, life = 3.5, lod = ctx.lod }) then
+            return
+        end
+    end
     local fn = name and Sig[name]
     if fn then fn(ctx, x, y, z, opts) end
 end

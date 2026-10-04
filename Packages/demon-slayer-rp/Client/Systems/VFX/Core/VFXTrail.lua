@@ -72,6 +72,9 @@ end
 
 --- Traînée standard du katana (main droite) pour un élément.
 function Trail.Blade(element, actor, seconds)
+    -- Pack Niagara : traînée élémentaire attachée au katana
+    local packed = VFX.Pack and VFX.Pack.Attach("Trail", element, actor, "hand_r", (seconds or 0.6) + 0.3)
+    if packed then return packed end
     return Trail.Attach(element, actor, "hand_r", { duration = seconds or 0.6 })
 end
 

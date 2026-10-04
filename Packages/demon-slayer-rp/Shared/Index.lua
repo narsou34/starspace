@@ -29,6 +29,7 @@ Package.Require("Config/Breathing/FlameThunderMist.lua")
 Package.Require("Config/DemonArts.lua")
 Package.Require("Config/DemonArts/Arts.lua")
 Package.Require("Config/Vfx.lua")
+Package.Require("Config/VfxPackCatalog.lua")
 
 -- Systèmes partagés (catalogue construit et vérifié au chargement)
 Package.Require("Systems/Catalog.lua")

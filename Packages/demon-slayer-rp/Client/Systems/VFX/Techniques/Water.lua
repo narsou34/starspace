@@ -83,6 +83,18 @@ local function buildWave(ctx, wave, startMs, travelMs, opts)
     local life = travelSec + (opts.linger or 0.5)
 
     ctx:At(startMs, function()
+        -- Pack Niagara installé : NS_VFX_Water_Wave / _Tsunami qui avance réellement
+        local sx0, sy0, sz0 = ctx:Point(wave.StartDistance, 0, opts.baseZ)
+        local packed = VFX.Pack.Play(opts.power >= 2 and "Tsunami" or "Wave", WATER, sx0, sy0, sz0, {
+            yaw = ctx.yaw, direction = { ctx.fx, ctx.fy, 0 }, scale = opts.scale / 1.4,
+            speed = (wave.Distance - wave.StartDistance) / math.max(0.1, travelSec) / 900,
+            duration = (travelSec + (opts.rise or 0) / 1000) / (opts.power >= 2 and 3 or 1.6),
+            endPoint = { ctx:Point(wave.Distance, 0, opts.baseZ) }, life = life + 1.5,
+        })
+        if packed then
+            waveSound(sx0, sy0, sz0, travelSec + (opts.rise or 0) / 1000, opts.power)
+            return
+        end
         for i = 1, count do
             local lateral = (i - 1) / math.max(1, count - 1) - 0.5 -- -0.5 .. 0.5
             local sx, sy, sz = ctx:Point(wave.StartDistance, lateral * wave.StartWidth, opts.baseZ)
@@ -217,6 +229,11 @@ Choreo.Register("water_vortex", {
         ctx:At(tl.WindupMs, function()
             if ctx.isLocal then CamFx.Fov(tech.Camera.Fov, tech.Camera.DurationMs) end
             -- Colonne du vortex : plusieurs couches superposées
+            -- Pack Niagara installé : NS_VFX_Water_Tornado
+            if VFX.Pack.Play("Tornado", WATER, cx, cy, cz, { scale = v.Radius / 300, duration = activeSec / 2.5, life = activeSec + 1 }) then
+                Sfx.Play(SFX.Roar, cx, cy, cz, { volume = 0.35, pitch = 0.7, life = activeSec, fadeOut = 0.8 })
+                return
+            end
             -- Forme anime : spirale au sol + tornade d'eau peinte
             VFX.Toon.Ground("Spiral", cx, cy, cz, { size = v.Radius * 2.4, color = { 0.3, 0.75, 1.0 }, glow = 1.6,
                 life = activeSec, spin = 420, scale = 0.3, grow = 1.0, alpha = 0.9, priority = "main" })
@@ -496,6 +513,15 @@ Choreo.Register("water_dragon", {
             Vfx.Spawn(FX.Spray, o.x, o.y, o.z, { yaw = ctx.yaw, scale = 1.6, life = 1.2 })
             if ctx.isLocal then CamFx.Fov(tech.Camera.Fov, tl.TravelMs) end
 
+            -- Pack Niagara installé : NS_VFX_Water_Dragon (tête + corps + rubans) sur la même trajectoire
+            local ex, ey, ez = pathPoint(1)
+            if VFX.Pack.Play("Dragon", WATER, sx, sy, sz, { yaw = ctx.yaw, direction = { ctx.fx, ctx.fy, 0 },
+                    endPoint = { ex, ey, ez }, duration = travelSec / 2.2, speed = dragon.Distance and dragon.Distance / travelSec / 1400 or 1,
+                    life = travelSec + 1.5 }) then
+                ctx.data.packed = true
+                return
+            end
+
             -- Tête
             local life = travelSec + 0.3
             local head = Vfx.Spawn(FX.Storm, sx, sy, sz, { scale = Vector(2.4, 2.4, 2.0), life = life, priority = "main" })
@@ -539,6 +565,7 @@ Choreo.Register("water_dragon", {
 
         -- Gouttes et brume arrachées au passage de la tête
         ctx:Every(tl.WindupMs, tl.WindupMs + tl.TravelMs, 150, function(_, elapsed)
+            if ctx.data.packed then return end
             local p = (elapsed - tl.WindupMs) / tl.TravelMs
             local x, y, z = pathPoint(p)
             -- Corps du dragon : écailles d'eau peintes orientées le long de la trajectoire

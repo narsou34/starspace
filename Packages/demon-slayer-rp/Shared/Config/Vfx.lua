@@ -42,4 +42,17 @@ Config.Vfx = {
     --   water = { Slash = "mon-pack::P_WaterSlash", Impact = "mon-pack::P_WaterHit",
     --             Projectile = "mon-pack::P_WaterBall", Zone = "mon-pack::P_Whirlpool", Scale = 1 },
     CustomPack = {},
+
+    -- Pack Niagara Demon Slayer (DemonSlayerVFX/, construit dans Unreal puis cuit en Asset Pack
+    -- "demonslayer-vfx"). Pour l'activer :
+    --   1. copier l'Asset Pack cuit dans Server/Assets/demonslayer-vfx/
+    --   2. ajouter "demonslayer-vfx" à assets_requirements dans Package.toml
+    --   3. Enabled = true ici
+    -- Les rôles d'effet (coupe, traînée, impact, projectile, élan, zone, vague, tsunami,
+    -- tornade, dragon) jouent alors les NS_VFX_* du pack (table : Config/VfxPackCatalog.lua).
+    Pack = {
+        Enabled = false,
+        Scale = 1,             -- taille globale des systèmes du pack
+        Intensity = 1,         -- luminosité globale
+    },
 }

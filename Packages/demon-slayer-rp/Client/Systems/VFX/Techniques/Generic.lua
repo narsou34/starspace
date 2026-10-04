@@ -102,6 +102,11 @@ end
 
 local function onBurst(ctx, x, y, z, size)
     local fx = fxOf(ctx)
+    -- Pack Niagara : explosion / jaillissement dédié de l'élément pour les gros impacts programmés
+    if (size == "Large" or size == "Massive") and not lookOf(ctx).OnBurst then
+        VFX.Pack.Play(size == "Massive" and "Explosion" or "Burst", ctx.element, x, y, z,
+            { yaw = ctx.yaw, scale = size == "Massive" and 1.5 or 1, life = 3, lod = ctx.lod })
+    end
     VFX.PlaySignature(lookOf(ctx).OnBurst, ctx, x, y, z)
     VFX.Impact(ctx.element, size or "Large", x, y, z, ctx.yaw)
     VFX.Layers(fx.Burst, x, y, z, ctx.yaw, { priority = "main", lod = ctx.lod })
@@ -473,6 +478,16 @@ function GenericVfx:Start()
             right = { fx, fy, 0 }, up = { -fy, fx, 0 }, size = 200, life = 8, glow = 1, priority = "main" })
         Chat.AddMessage("<cyan>[DSRP]</> Calibration : fleche rouge = devant, barre verte = haut (mur) / gauche (sol).")
     end, "Affiche la carte de calibration des VFX anime")
+
+    -- Active / désactive le pack Niagara (à condition qu'il soit installé)
+    Console.RegisterCommand("ds_vfxpack", function(state)
+        Config.Vfx.Pack = Config.Vfx.Pack or {}
+        if state == "on" then Config.Vfx.Pack.Enabled = true
+        elseif state == "off" then Config.Vfx.Pack.Enabled = false
+        else Config.Vfx.Pack.Enabled = not Config.Vfx.Pack.Enabled end
+        Chat.AddMessage("<cyan>[DSRP]</> Pack Niagara " .. (Config.Vfx.Pack.Enabled and "ACTIVE" or "desactive")
+            .. " (" .. Config.VfxPackCatalog.PackId .. ", " .. #Config.VfxPackCatalog.Systems .. " systemes)")
+    end, "Active ou desactive le pack Niagara demonslayer-vfx (ds_vfxpack on|off)")
 
     -- Démonstration sans combat : croissant + impact de chaque élément devant soi
     Console.RegisterCommand("ds_vfxdemo", function(id)

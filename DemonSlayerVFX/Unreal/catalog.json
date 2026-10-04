@@ -1,0 +1,2683 @@
+{
+ "pack_id": "demonslayer-vfx",
+ "root": "DemonSlayerVFX",
+ "user_params": [
+  [
+   "Color",
+   "LinearColor",
+   "Couleur principale (HDR : > 1 = brille)"
+  ],
+  [
+   "SecondaryColor",
+   "LinearColor",
+   "Couleur secondaire (cœur, écume, braises)"
+  ],
+  [
+   "Scale",
+   "Float",
+   "Taille globale (1 = normal)"
+  ],
+  [
+   "Intensity",
+   "Float",
+   "Luminosité / émissif (1 = normal)"
+  ],
+  [
+   "Duration",
+   "Float",
+   "Multiplicateur de durée (1 = normal)"
+  ],
+  [
+   "Speed",
+   "Float",
+   "Multiplicateur de vitesse (1 = normal)"
+  ],
+  [
+   "SpawnScale",
+   "Float",
+   "Multiplicateur du nombre de particules (LOD manuel, 0..1)"
+  ],
+  [
+   "Width",
+   "Float",
+   "Largeur des traînées / rubans (cm)"
+  ],
+  [
+   "Direction",
+   "Vector",
+   "Direction de l'attaque (monde), défaut = avant de l'acteur"
+  ],
+  [
+   "EndPoint",
+   "Vector",
+   "Point d'arrivée (éclairs, élans, projectiles)"
+  ]
+ ],
+ "masters": {
+  "M_VFX_Sprite_Additive": "Sprites lumineux (flash, étincelles, gouttes, braises). Additif, unlit. Texture x Color x Emissive x couleur de particule ; érosion par Dynamic Parameter (Param1) ; Depth Fade.",
+  "M_VFX_Sprite_Translucent": "Fumée, brume, poussière. Translucide, unlit. Alpha = masque x bruit panné ; érosion (Param1) ; Depth Fade large.",
+  "M_VFX_Sprite_Flipbook": "Flipbooks sub-UV (flammes, éclaboussures, éclairs, explosion). Additif, ParticleSubUV avec fondu entre images.",
+  "M_VFX_Mesh_Slash": "Coupes / anneaux / ondes sur maillage. Additif, deux faces. Masque de traînée parcouru en U (Param1 = balayage), bruit panné, fresnel de bord, érosion (Param2).",
+  "M_VFX_Ribbon": "Rubans (traînées de lame, spirales). Additif. Texture tuilable pannée en U, fondu de queue (U), érosion selon l'alpha de particule.",
+  "M_VFX_Mesh_Energy": "Volumes d'énergie / d'eau (vague, dragon, boule, vortex). Translucide unlit, fresnel, caustiques pannées, Depth Fade, érosion (Param1).",
+  "M_VFX_Distortion": "Distorsion de chaleur / onde de choc. Translucide, Refraction depuis une normale pannée, intensité x alpha de particule."
+ },
+ "instances": [
+  {
+   "name": "MI_VFX_Water_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.8,
+     0.97,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Water"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.8,
+     0.97,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Water",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.8,
+     0.97,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 9.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Droplet"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.8,
+     0.97,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Splash_4x4"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.39999999999999997,
+     0.625,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.8,
+     0.97,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 3.5999999999999996,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Caustics"
+   }
+  },
+  {
+   "name": "MI_VFX_Water_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Water",
+   "vectors": {
+    "Color": [
+     0.1,
+     0.55,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.85,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Emissive": 10,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Fire"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.85,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Emissive": 10,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Fire",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ]
+   },
+   "scalars": {
+    "Emissive": 10
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.85,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Emissive": 15.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Spark"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.85,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Emissive": 10
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Fire_8x8"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     0.85,
+     0.51,
+     0.37
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.85,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Emissive": 6.0,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Fire_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Fire",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.32,
+     0.04
+    ]
+   },
+   "scalars": {
+    "Emissive": 10
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Emissive": 16,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Emissive": 16,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Lightning_1x4",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ]
+   },
+   "scalars": {
+    "Emissive": 16
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Emissive": 24.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Spark"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Emissive": 16
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Lightning_4x4"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     0.85,
+     0.76,
+     0.41
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Emissive": 9.6,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Thunder_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Thunder",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.82,
+     0.12
+    ]
+   },
+   "scalars": {
+    "Emissive": 16
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 4,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Wind"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 4,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Wind",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ]
+   },
+   "scalars": {
+    "Emissive": 4
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.92,
+     1.0,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 6.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Leaf"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 4
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Smoke_8x8"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.575,
+     0.85,
+     0.675
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 2.4,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Wind_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     1.0,
+     0.65
+    ]
+   },
+   "scalars": {
+    "Emissive": 4
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 2,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Mist"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 2,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Mist",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 2
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 3.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 2
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Mist_4x4"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.725,
+     0.76,
+     0.825
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Mist_4x4",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 1.2,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Mist_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Mist",
+   "vectors": {
+    "Color": [
+     0.75,
+     0.82,
+     0.95
+    ]
+   },
+   "scalars": {
+    "Emissive": 2
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.55,
+     0.55
+    ]
+   },
+   "scalars": {
+    "Emissive": 8,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Energy"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.55,
+     0.55
+    ]
+   },
+   "scalars": {
+    "Emissive": 8,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Energy",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.55,
+     0.55
+    ]
+   },
+   "scalars": {
+    "Emissive": 12.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Droplet"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.55,
+     0.55
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Explosion_8x8"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     0.85,
+     0.37,
+     0.39999999999999997
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.55,
+     0.55
+    ]
+   },
+   "scalars": {
+    "Emissive": 4.8,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Blood_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Blood",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.04,
+     0.1
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Energy"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Energy",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.92,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 9.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shard"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Mist_4x4"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.575,
+     0.7749999999999999,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ],
+    "SecondaryColor": [
+     0.92,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 3.5999999999999996,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Caustics"
+   }
+  },
+  {
+   "name": "MI_VFX_Ice_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.85,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 6
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ],
+    "SecondaryColor": [
+     0.9,
+     0.6,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 5,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Mist"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ],
+    "SecondaryColor": [
+     0.9,
+     0.6,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 5,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Mist",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.9,
+     0.6,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 7.5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ],
+    "SecondaryColor": [
+     0.9,
+     0.6,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Smoke_8x8"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.575,
+     0.39999999999999997,
+     0.8
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ],
+    "SecondaryColor": [
+     0.9,
+     0.6,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 3.0,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Shadow_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.1,
+     0.9
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.92,
+     0.96
+    ]
+   },
+   "scalars": {
+    "Emissive": 5,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Energy"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.92,
+     0.96
+    ]
+   },
+   "scalars": {
+    "Emissive": 5,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Energy",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.92,
+     0.96
+    ]
+   },
+   "scalars": {
+    "Emissive": 7.5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Petal"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.92,
+     0.96
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Mist_4x4"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     0.85,
+     0.55,
+     0.7
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ],
+    "SecondaryColor": [
+     1.0,
+     0.92,
+     0.96
+    ]
+   },
+   "scalars": {
+    "Emissive": 3.0,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Flower_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Energy",
+   "vectors": {
+    "Color": [
+     1.0,
+     0.4,
+     0.7
+    ]
+   },
+   "scalars": {
+    "Emissive": 5
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Slash",
+   "parent": "M_VFX_Mesh_Slash",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 8,
+    "PanSpeed": 1.5,
+    "FresnelPower": 3
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SlashTrail",
+    "Noise": "T_VFX_Trail_Energy"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Trail",
+   "parent": "M_VFX_Ribbon",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 8,
+    "PanSpeed": 2.0,
+    "Tiling": 2
+   },
+   "textures": {
+    "Trail": "T_VFX_Trail_Energy",
+    "Noise": "T_VFX_Noise_Streaks"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Glow",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_SoftCircle"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Spark",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 12.0
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Spark"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Flipbook",
+   "parent": "M_VFX_Sprite_Flipbook",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Flipbook": "T_VFX_Flip_Explosion_8x8"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Smoke",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     0.85,
+     0.85,
+     0.85
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.6
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Mesh",
+   "parent": "M_VFX_Mesh_Energy",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "SecondaryColor": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 4.8,
+    "Opacity": 0.85,
+    "FresnelPower": 2.5
+   },
+   "textures": {
+    "Noise": "T_VFX_Noise_Perlin"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Ring",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Shockwave"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Distortion",
+   "parent": "M_VFX_Distortion",
+   "folder": "Core",
+   "vectors": {},
+   "scalars": {
+    "Strength": 0.08,
+    "PanSpeed": 0.3
+   },
+   "textures": {
+    "Normal": "T_VFX_Distortion_Noise_N"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_DistortionRing",
+   "parent": "M_VFX_Distortion",
+   "folder": "Core",
+   "vectors": {},
+   "scalars": {
+    "Strength": 0.15,
+    "PanSpeed": 0.0
+   },
+   "textures": {
+    "Normal": "T_VFX_Distortion_Ring_N"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Flash",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1,
+     1,
+     1
+    ]
+   },
+   "scalars": {
+    "Emissive": 20
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Star"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Sigil",
+   "parent": "M_VFX_Sprite_Additive",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     1,
+     1,
+     1
+    ]
+   },
+   "scalars": {
+    "Emissive": 8
+   },
+   "textures": {
+    "Mask": "T_VFX_Mask_Sigil"
+   }
+  },
+  {
+   "name": "MI_VFX_Core_Dust",
+   "parent": "M_VFX_Sprite_Translucent",
+   "folder": "Core",
+   "vectors": {
+    "Color": [
+     0.45,
+     0.4,
+     0.35
+    ]
+   },
+   "scalars": {
+    "Opacity": 0.5
+   },
+   "textures": {
+    "Mask": "T_VFX_Flip_Smoke_8x8",
+    "Noise": "T_VFX_Noise_Cloud"
+   }
+  }
+ ],
+ "systems": [
+  {
+   "name": "NS_Core_Trail",
+   "element": "Core",
+   "archetype": "Trail",
+   "usage": "Traînée neutre (teinte via User.Color) pour toute arme ou acteur.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_RibbonTrail",
+   "element": "Core",
+   "archetype": "Trail",
+   "usage": "Ruban large et doux (rémanence de mouvement du corps).",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_EnergyTrail",
+   "element": "Core",
+   "archetype": "Trail",
+   "usage": "Traînée d'énergie avec cœur blanc très lumineux.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_ElementTrail",
+   "element": "Core",
+   "archetype": "Trail",
+   "usage": "Traînée générique dont la texture de MI est remplacée par élément (base des _Trail).",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_Flash",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Flash seul (début d'attaque, contre).",
+   "special": "Uniquement E_Flash + E_Distortion.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_Shockwave",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Onde de choc au sol.",
+   "special": "Uniquement E_Shockwave (2 ondes) + E_Distortion.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_Distortion",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Distorsion seule (chaleur, onde).",
+   "special": "Uniquement E_Distortion.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_SpeedLines",
+   "element": "Core",
+   "archetype": "Dash",
+   "usage": "Lignes de vitesse seules (élan, sprint).",
+   "special": "Uniquement E_SpeedLines.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_Sparks",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Étincelles de lame (parade, choc de katanas).",
+   "special": "Uniquement E_Burst (Velocity Cone 45°).",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Core_Debris",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Débris et poussière au sol.",
+   "special": "E_Dust + E_Debris.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Core"
+  },
+  {
+   "name": "NS_Impact_Small",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Petit coup (combo, tick de zone).",
+   "special": "Flash + E_Burst(20) + E_Element.",
+   "mesh": null,
+   "duration": "0,5 s",
+   "perf": "≈ 25 particules",
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Impacts"
+  },
+  {
+   "name": "NS_Impact_Medium",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Coup normal.",
+   "special": "+ onde + distorsion.",
+   "mesh": null,
+   "duration": "0,8 s",
+   "perf": "≈ 50 particules",
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Impacts"
+  },
+  {
+   "name": "NS_Impact_Large",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Coup puissant / fin de combo.",
+   "special": "+ poussière + débris + 2e onde.",
+   "mesh": null,
+   "duration": "1,2 s",
+   "perf": "≈ 90 particules",
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Impacts"
+  },
+  {
+   "name": "NS_Impact_Massive",
+   "element": "Core",
+   "archetype": "Impact",
+   "usage": "Ultime / explosion finale.",
+   "special": "+ anneau de 6 gerbes + onde x3 + caméra.",
+   "mesh": null,
+   "duration": "1,6 s",
+   "perf": "≈ 150 particules",
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Niagara/Impacts"
+  },
+  {
+   "name": "NS_VFX_Water_Slash",
+   "element": "Water",
+   "archetype": "Slash",
+   "usage": "Toute coupe du Souffle de l'Eau (formes 1, 2, 4...).",
+   "special": "Gouttelettes avec gravité, écume (MI_Water_Spark), brume bleutée en dissipation.",
+   "mesh": "SM_VFX_Slash_Arc_180",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Trail",
+   "element": "Water",
+   "archetype": "Trail",
+   "usage": "Traînée d'eau attachée au katana (hand_r) pendant les techniques.",
+   "special": "E_Bits = gouttes qui tombent (Gravity -600).",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Wave",
+   "element": "Water",
+   "archetype": "Wave",
+   "usage": "[Q] Grande vague.",
+   "special": "1 maillage, Speed 900.",
+   "mesh": "SM_VFX_Wave_Curl",
+   "duration": "1,6 s",
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Tsunami",
+   "element": "Water",
+   "archetype": "Wave",
+   "usage": "[X] Tsunami (ultime).",
+   "special": "3 maillages côte à côte, Scale 2,5, montée 0,6 s, Speed 600, explosion massive finale.",
+   "mesh": "SM_VFX_Wave_Curl",
+   "duration": "3 s",
+   "perf": "≈ 250 particules (GPU)",
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Tornado",
+   "element": "Water",
+   "archetype": "Vortex",
+   "usage": "[E] Tourbillon.",
+   "special": "Rubans en spirale bleus + gouttes aspirées vers l'axe.",
+   "mesh": "SM_VFX_Vortex_Cone",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Ball",
+   "element": "Water",
+   "archetype": "Projectile",
+   "usage": "[R] Prison d'eau (sphère lancée).",
+   "special": "E_Core = bulle (Fresnel fort) ; impact : NS_VFX_Water_Explosion.",
+   "mesh": "SM_VFX_Sphere",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Dragon",
+   "element": "Water",
+   "archetype": "Beast",
+   "usage": "[C] Dragon changeant.",
+   "special": "Écailles = segments + MI_Water_Slash ; moustaches en rubans ; brume.",
+   "mesh": "SM_VFX_Dragon_Head",
+   "duration": "2,2 s",
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Explosion",
+   "element": "Water",
+   "archetype": "Burst",
+   "usage": "Éclatement de la prison, fin de tourbillon.",
+   "special": "Flipbook éclaboussures + sphère d'eau qui s'ouvre.",
+   "mesh": "SM_VFX_Sphere",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Impact",
+   "element": "Water",
+   "archetype": "Impact",
+   "usage": "Impact d'eau (variante WaterImpact).",
+   "special": "E_Element = T_VFX_Flip_Splash_4x4.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Water_Dash",
+   "element": "Water",
+   "archetype": "Dash",
+   "usage": "[F] Courant fulgurant.",
+   "special": "Rémanence d'eau + éclaboussures au départ et à l'arrivée.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Water"
+  },
+  {
+   "name": "NS_VFX_Fire_Slash",
+   "element": "Fire",
+   "archetype": "Slash",
+   "usage": "Coupes du Souffle de la Flamme.",
+   "special": "Langues de feu (flipbook) le long de l'arc + braises (Gravity +50) + chaleur (distorsion).",
+   "mesh": "SM_VFX_Slash_Arc_180",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Fire_Trail",
+   "element": "Fire",
+   "archetype": "Trail",
+   "usage": "Traînée de flammes sur la lame.",
+   "special": "E_Bits = braises qui montent (Gravity +80).",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Fire_Burst",
+   "element": "Fire",
+   "archetype": "Burst",
+   "usage": "Univers flamboyant (jaillissement).",
+   "special": "Colonnes de flammes (flipbook, Velocity +Z).",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Fire_Explosion",
+   "element": "Fire",
+   "archetype": "Burst",
+   "usage": "Explosion de feu (ultime Purgatoire, fin de projectile).",
+   "special": "Boule de feu + fumée noire + onde orange.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Fire_Dragon",
+   "element": "Fire",
+   "archetype": "Beast",
+   "usage": "Tigre / dragon de flammes (forme 5, Purgatoire).",
+   "special": "Corps en flipbooks de flammes, tête maillée MI_Fire_Mesh.",
+   "mesh": "SM_VFX_Dragon_Head",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Fire_Impact",
+   "element": "Fire",
+   "archetype": "Impact",
+   "usage": "Impact de feu (FireImpact).",
+   "special": "E_Element = T_VFX_Flip_Fire_8x8, fumée.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Fire"
+  },
+  {
+   "name": "NS_VFX_Thunder_Dash",
+   "element": "Thunder",
+   "archetype": "Dash",
+   "usage": "Éclair foudroyant (le joueur disparaît presque).",
+   "special": "Durée 0,3 s ; 3 beams du départ à EndPoint ; flash énorme au départ ; rémanence 0,12 s seulement.",
+   "mesh": null,
+   "duration": "0,4 s",
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Thunder"
+  },
+  {
+   "name": "NS_VFX_Thunder_Slash",
+   "element": "Thunder",
+   "archetype": "Slash",
+   "usage": "Coupes de la Foudre.",
+   "special": "Arc + 4 beams courts le long de l'arc ; étincelles très rapides (Lifetime 0,15).",
+   "mesh": "SM_VFX_Slash_Crescent_Tilted",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Thunder"
+  },
+  {
+   "name": "NS_VFX_Thunder_Burst",
+   "element": "Thunder",
+   "archetype": "Bolt",
+   "usage": "Pluie d'éclairs autour d'un point.",
+   "special": "6 beams verticaux du ciel (EndPoint) au sol, décalés de 0,05 s.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Thunder"
+  },
+  {
+   "name": "NS_VFX_Thunder_Impact",
+   "element": "Thunder",
+   "archetype": "Impact",
+   "usage": "Impact électrique (ThunderImpact).",
+   "special": "E_Element = T_VFX_Flip_Lightning_4x4 ; arcs au sol.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Thunder"
+  },
+  {
+   "name": "NS_VFX_Thunder_Explosion",
+   "element": "Thunder",
+   "archetype": "Burst",
+   "usage": "Explosion électrique (Honoikazuchi).",
+   "special": "Sphère + 10 beams radiaux + flash aveuglant.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Thunder"
+  },
+  {
+   "name": "NS_VFX_Wind_Slash",
+   "element": "Wind",
+   "archetype": "Slash",
+   "usage": "Lames d'air.",
+   "special": "3 arcs fins décalés (griffes) ; feuilles + poussière.",
+   "mesh": "SM_VFX_Slash_Arc_120",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Wind_Trail",
+   "element": "Wind",
+   "archetype": "Trail",
+   "usage": "Traînée de vent sur la lame.",
+   "special": "Feuilles (MI_Wind_Spark) emportées par Curl Noise.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Wind_Tornado",
+   "element": "Wind",
+   "archetype": "Vortex",
+   "usage": "Tornades (Arbre de la tempête, Typhon).",
+   "special": "Débris, feuilles, poussière au sol.",
+   "mesh": "SM_VFX_Vortex_Cone",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Wind_Blade",
+   "element": "Wind",
+   "archetype": "Projectile",
+   "usage": "Lame d'air lancée (Vent froid de montagne).",
+   "special": "E_Core = SM_VFX_Slash_Arc_120 au lieu de la sphère.",
+   "mesh": "SM_VFX_Slash_Arc_120",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Wind_Impact",
+   "element": "Wind",
+   "archetype": "Impact",
+   "usage": "Impact de vent (WindImpact).",
+   "special": "Poussière radiale + feuilles.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Wind_Dash",
+   "element": "Wind",
+   "archetype": "Dash",
+   "usage": "Élan du vent.",
+   "special": "Spirales autour du trajet.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Wind"
+  },
+  {
+   "name": "NS_VFX_Mist_Slash",
+   "element": "Mist",
+   "archetype": "Slash",
+   "usage": "Coupes de la Brume.",
+   "special": "Arc très doux (érosion forte) ; la brume reste 1,5 s.",
+   "mesh": "SM_VFX_Slash_Arc_180",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Mist"
+  },
+  {
+   "name": "NS_VFX_Mist_Trail",
+   "element": "Mist",
+   "archetype": "Trail",
+   "usage": "Traînée de brume.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Mist"
+  },
+  {
+   "name": "NS_VFX_Mist_Fog",
+   "element": "Mist",
+   "archetype": "Aura",
+   "usage": "Nappe de brume (Éclaboussures de brume, Brume obscurcissante).",
+   "special": "E_Sigil remplacé par 20 sprites de brume au sol (MI_Mist_Smoke), particules flottantes.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Mist"
+  },
+  {
+   "name": "NS_VFX_Mist_Vanish",
+   "element": "Mist",
+   "archetype": "Dash",
+   "usage": "Le joueur se fond dans la brume puis réapparaît.",
+   "special": "Nuage épais qui recouvre le personnage 0,4 s (le script masque le personnage).",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Mist"
+  },
+  {
+   "name": "NS_VFX_Mist_Impact",
+   "element": "Mist",
+   "archetype": "Impact",
+   "usage": "Impact de brume (MistImpact).",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/Mist"
+  },
+  {
+   "name": "NS_VFX_Blood_Slash",
+   "element": "Blood",
+   "archetype": "Slash",
+   "usage": "Griffes / lames de sang.",
+   "special": "Projections stylisées (MI_Blood_Spark, gravité).",
+   "mesh": "SM_VFX_Slash_Arc_120",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Blood_Burst",
+   "element": "Blood",
+   "archetype": "Burst",
+   "usage": "Explosion de sang + sceau.",
+   "special": "E_Ring = sceau MI_VFX_Core_Sigil rouge qui tourne.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Blood_Projectile",
+   "element": "Blood",
+   "archetype": "Projectile",
+   "usage": "Lame de sang lancée.",
+   "special": "E_Core = SM_VFX_Slash_Arc_120.",
+   "mesh": "SM_VFX_Slash_Arc_120",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Blood_Aura",
+   "element": "Blood",
+   "archetype": "Aura",
+   "usage": "Éveil du sang (aura).",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Blood_Impact",
+   "element": "Blood",
+   "archetype": "Impact",
+   "usage": "Impact de sang (BloodImpact).",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Ice_Slash",
+   "element": "Ice",
+   "archetype": "Slash",
+   "usage": "Éventails de glace.",
+   "special": "Cristaux (MI_Ice_Spark = éclats) + neige.",
+   "mesh": "SM_VFX_Slash_Arc_180",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Ice_Spikes",
+   "element": "Ice",
+   "archetype": "Spikes",
+   "usage": "Hiver glacé (pics en cercle).",
+   "special": "",
+   "mesh": "SM_VFX_Spike_Ice",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Ice_Shard",
+   "element": "Ice",
+   "archetype": "Projectile",
+   "usage": "Lance de glace.",
+   "special": "E_Core = SM_VFX_Spike_Ice orienté vers l'avant.",
+   "mesh": "SM_VFX_Spike_Ice",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Ice_Explosion",
+   "element": "Ice",
+   "archetype": "Burst",
+   "usage": "Explosion de glace (Bodhisattva).",
+   "special": "Éclats maillés + brume froide.",
+   "mesh": "SM_VFX_Spike_Ice",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Ice_Impact",
+   "element": "Ice",
+   "archetype": "Impact",
+   "usage": "Impact de glace (IceImpact).",
+   "special": "E_Debris = SM_VFX_Spike_Ice.",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Shadow_Slash",
+   "element": "Shadow",
+   "archetype": "Slash",
+   "usage": "Griffes d'ombre.",
+   "special": "Fumée noire + particules violettes.",
+   "mesh": "SM_VFX_Slash_Arc_120",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Shadow_Vortex",
+   "element": "Shadow",
+   "archetype": "Vortex",
+   "usage": "Vortex ténébreux.",
+   "special": "Distorsion forte au centre.",
+   "mesh": "SM_VFX_Vortex_Cone",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Shadow_Projectile",
+   "element": "Shadow",
+   "archetype": "Projectile",
+   "usage": "Lance du néant.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Shadow_Aura",
+   "element": "Shadow",
+   "archetype": "Aura",
+   "usage": "Nuit éternelle / aura d'ombre.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Shadow_Impact",
+   "element": "Shadow",
+   "archetype": "Impact",
+   "usage": "Impact d'ombre.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Flower_Slash",
+   "element": "Flower",
+   "archetype": "Slash",
+   "usage": "Pétales tranchants.",
+   "special": "Pétales maillés (SM_VFX_Petal) au lieu des gouttes.",
+   "mesh": "SM_VFX_Slash_Arc_180",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Flower_PetalStorm",
+   "element": "Flower",
+   "archetype": "Vortex",
+   "usage": "Tempête de pétales / jardin.",
+   "special": "E_Funnel masqué (alpha faible), pétales maillés en spirale.",
+   "mesh": "SM_VFX_Petal",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Flower_Bloom",
+   "element": "Flower",
+   "archetype": "Burst",
+   "usage": "Éclosion (fleur lumineuse au sol).",
+   "special": "Sceau remplacé par 6 pétales maillés géants qui s'ouvrent.",
+   "mesh": "SM_VFX_Petal",
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Flower_Projectile",
+   "element": "Flower",
+   "archetype": "Projectile",
+   "usage": "Liane / projectile floral.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  },
+  {
+   "name": "NS_VFX_Flower_Impact",
+   "element": "Flower",
+   "archetype": "Impact",
+   "usage": "Impact floral.",
+   "special": "",
+   "mesh": null,
+   "duration": null,
+   "perf": null,
+   "params_extra": "",
+   "folder": "DemonSlayerVFX/Systems/BloodArts"
+  }
+ ],
+ "zones": [
+  "WATER",
+  "FIRE",
+  "THUNDER",
+  "WIND",
+  "MIST",
+  "BLOOD ARTS",
+  "IMPACTS",
+  "TRAILS",
+  "PROJECTILES"
+ ]
+}

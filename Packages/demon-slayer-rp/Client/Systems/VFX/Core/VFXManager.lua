@@ -165,7 +165,7 @@ local elements = {}
 
 --- Enregistre une identité visuelle (voir Client/Systems/VFX/Elements/).
 function VFX.RegisterElement(id, preset)
-    preset.Id = id
+    preset.Id = preset.Id or id   -- un alias (eau -> water) ne remplace pas l identifiant d origine
     elements[id] = preset
 end
 

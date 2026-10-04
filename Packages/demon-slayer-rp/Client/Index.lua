@@ -27,6 +27,7 @@ local MODULE_FILES = {
     "Systems/VFX/Core/VFXUtils.lua",
     "Systems/VFX/Core/VFXManager.lua",
     "Systems/VFX/Core/VFXToon.lua",
+    "Systems/VFX/Core/VFXPack.lua",
     "Systems/VFX/Core/VFXSoundCamera.lua",
     "Systems/VFX/Core/VFXTrail.lua",
     "Systems/VFX/Core/VFXBurst.lua",
