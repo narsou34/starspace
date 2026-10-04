@@ -10,7 +10,7 @@ function resetText(username: string, code: string, minutes: number): string {
   return [
     `Bonjour ${username},`,
     '',
-    'Une demande de réinitialisation de mot de passe a été effectuée pour votre compte Demon Slayer RP.',
+    'Une demande de réinitialisation de mot de passe a été effectuée pour votre compte NDR | Demon Slayer.',
     '',
     `Votre code : ${code}`,
     '',
@@ -31,7 +31,7 @@ class SmtpMailer implements Mailer {
     await this.transport.sendMail({
       from: this.from,
       to,
-      subject: 'Demon Slayer RP — Réinitialisation du mot de passe',
+      subject: 'NDR | Demon Slayer — Réinitialisation du mot de passe',
       text: resetText(username, code, minutes),
     });
   }

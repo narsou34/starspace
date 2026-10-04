@@ -30,7 +30,7 @@ async function http<T>(method: HttpMethod, path: string, body?: unknown, bearer?
   } catch {
     throw {
       code: 'NETWORK_ERROR',
-      message: 'Impossible de joindre le serveur Demon Slayer RP. Vérifiez votre connexion internet.',
+      message: 'Impossible de joindre le serveur NDR | Demon Slayer. Vérifiez votre connexion internet.',
       status: null,
       details: null,
     } satisfies LauncherError;

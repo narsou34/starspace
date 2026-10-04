@@ -104,7 +104,7 @@ La fenêtre native s'ouvre et se connecte à `http://127.0.0.1:8080`
 *Travailler uniquement le design :* `npm run dev` puis http://localhost:1420 dans un navigateur
 (transport de développement, tokens en mémoire, rechargement = déconnexion).
 
-## 3. Produire `Demon Slayer RP.exe` et l'installateur
+## 3. Produire `NDR - Demon Slayer.exe` et l'installateur
 
 1. Renseignez l'adresse **HTTPS** de votre API de production dans
    `Launcher/src-tauri/resources/launcher.config.json` :
@@ -120,13 +120,13 @@ La fenêtre native s'ouvre et se connecte à `http://127.0.0.1:8080`
    ```
 
 3. Résultats :
-   - `src-tauri\target\release\Demon Slayer RP.exe`
-   - `src-tauri\target\release\bundle\nsis\Demon Slayer RP_0.1.0_x64-setup.exe` — installateur
+   - `src-tauri\target\release\NDR - Demon Slayer.exe`
+   - `src-tauri\target\release\bundle\nsis\NDR - Demon Slayer_0.1.0_x64-setup.exe` — installateur
      (raccourcis Bureau + menu Démarrer, désinstallation, lancement en fin d'installation)
 
 **Via GitHub Actions** : le workflow `.github/workflows/demon-slayer-launcher.yml` compile
 l'installateur sur un runner Windows à chaque push touchant `DemonSlayerLauncher/` et le publie
-en artefact `DemonSlayerRP-Windows`. Définissez la variable de dépôt `DSRP_API_URL` (Settings →
+en artefact `NDR-DemonSlayer-Windows`. Définissez la variable de dépôt `DSRP_API_URL` (Settings →
 Secrets and variables → Actions → *Variables*) pour y injecter l'adresse de l'API.
 
 Un joueur peut surcharger l'adresse sans recompiler en créant

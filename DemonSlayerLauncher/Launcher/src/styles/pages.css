@@ -19,7 +19,7 @@
 }
 
 .home__title span {
-  font-size: 72px;
+  font-size: 66px;
   letter-spacing: 0.06em;
   background: linear-gradient(180deg, #fff 20%, #b9b1a6);
   -webkit-background-clip: text;
@@ -30,7 +30,7 @@
 
 .home__title em {
   font-style: normal;
-  font-size: 72px;
+  font-size: 66px;
   color: var(--crimson-hi);
   text-shadow: 0 0 40px rgba(239, 51, 73, 0.55);
 }

@@ -53,9 +53,9 @@ const envSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v ? v : undefined)),
-  MAIL_FROM: z.string().default('Demon Slayer RP <no-reply@localhost>'),
+  MAIL_FROM: z.string().default('NDR Demon Slayer <no-reply@localhost>'),
 
-  PUBLIC_SERVER_NAME: z.string().default('Demon Slayer RP'),
+  PUBLIC_SERVER_NAME: z.string().default('NDR | Demon Slayer'),
   PUBLIC_DISCORD_URL: optionalUrl,
   PUBLIC_WEBSITE_URL: optionalUrl,
   PUBLIC_SUPPORT_EMAIL: z

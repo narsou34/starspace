@@ -3,12 +3,13 @@ import { useAuth } from '../auth/AuthContext';
 import { Avatar } from '../components/Avatar';
 import { Emblem } from '../components/Emblem';
 import { Icon } from '../components/Icons';
+import { IconTile } from '../components/IconTile';
 import { useToast } from '../components/Toasts';
 import { ROLE_LABELS, errorMessage, type AppInfo, type PublicConfig } from '../models/types';
 import { AccountView } from './AccountView';
 import { ComingSoonView } from './ComingSoonView';
 import { HomeView } from './HomeView';
-import { NAV_GROUPS, SETTINGS_ITEM, findNav, type NavItem, type ViewId } from './navigation';
+import { NAV_GROUPS, SETTINGS_ITEM, accentStyle, findNav, type NavItem, type ViewId } from './navigation';
 
 function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean; onSelect: (id: ViewId) => void }) {
   return (
@@ -17,8 +18,9 @@ function NavButton({ item, active, onSelect }: { item: NavItem; active: boolean;
       className={`nav__item${active ? ' is-active' : ''}`}
       onClick={() => onSelect(item.id)}
       aria-current={active ? 'page' : undefined}
+      style={accentStyle(item.breath)}
     >
-      <Icon name={item.icon} />
+      <IconTile name={item.icon} size="sm" />
       <span className="nav__label">{item.label}</span>
       {item.phase ? <span className="nav__soon">bientôt</span> : <span className="nav__kanji">{item.kanji}</span>}
     </button>
@@ -36,7 +38,7 @@ export function Shell({ info, config }: { info: AppInfo | null; config: PublicCo
     setLeaving(true);
     try {
       await logout();
-      toast.show('info', 'Déconnecté', 'À bientôt sur Demon Slayer RP.');
+      toast.show('info', 'Déconnecté', 'À bientôt sur NDR | Demon Slayer.');
     } catch (err) {
       toast.show('error', 'Déconnexion', errorMessage(err));
       setLeaving(false);
@@ -51,7 +53,9 @@ export function Shell({ info, config }: { info: AppInfo | null; config: PublicCo
         <div className="sidebar__brand">
           <Emblem size={44} />
           <div>
-            <strong>DEMON SLAYER</strong>
+            <strong>
+              <em>NDR</em> | DEMON SLAYER
+            </strong>
             <span>Roleplay · nanos</span>
           </div>
         </div>

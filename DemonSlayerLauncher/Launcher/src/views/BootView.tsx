@@ -6,7 +6,9 @@ export function BootView({ message }: { message: string }) {
       <div className="boot__emblem">
         <Emblem size={96} />
       </div>
-      <p className="boot__title">DEMON SLAYER RP</p>
+      <p className="boot__title">
+        <em>NDR</em> | DEMON SLAYER
+      </p>
       <p className="boot__message">{message}</p>
       <div className="boot__bar">
         <span />

@@ -1,4 +1,4 @@
-name: Demon Slayer RP — Launcher & API
+name: NDR | Demon Slayer — Launcher & API
 
 on:
   push:
@@ -86,8 +86,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: DemonSlayerRP-Windows
+          name: NDR-DemonSlayer-Windows
           path: |
             DemonSlayerLauncher/Launcher/src-tauri/target/release/bundle/nsis/*.exe
-            DemonSlayerLauncher/Launcher/src-tauri/target/release/Demon Slayer RP.exe
+            DemonSlayerLauncher/Launcher/src-tauri/target/release/NDR - Demon Slayer.exe
           if-no-files-found: error

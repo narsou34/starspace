@@ -12,7 +12,9 @@ export function TitleBar() {
     <header className="titlebar" data-tauri-drag-region>
       <div className="titlebar__brand" data-tauri-drag-region>
         <Emblem size={18} />
-        <span data-tauri-drag-region>DEMON SLAYER RP</span>
+        <span data-tauri-drag-region>
+          <b>NDR</b> | DEMON SLAYER
+        </span>
         <span className="titlebar__kanji" data-tauri-drag-region>
           鬼殺隊
         </span>

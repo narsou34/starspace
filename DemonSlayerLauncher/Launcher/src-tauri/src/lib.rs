@@ -45,5 +45,5 @@ pub fn run() {
             commands::api::api_request,
         ])
         .run(tauri::generate_context!())
-        .expect("Impossible de démarrer le launcher Demon Slayer RP");
+        .expect("Impossible de démarrer le launcher NDR | Demon Slayer");
 }

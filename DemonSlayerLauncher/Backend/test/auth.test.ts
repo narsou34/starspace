@@ -286,7 +286,7 @@ describe('divers', () => {
   it('expose la configuration publique du launcher', async () => {
     const res = await ctx.app.inject({ method: 'GET', url: '/api/launcher/config' });
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toMatchObject({ apiVersion: 1, serverName: 'Demon Slayer RP' });
+    expect(res.json()).toMatchObject({ apiVersion: 1, serverName: 'NDR | Demon Slayer' });
   });
 
   it('renvoie une erreur JSON propre pour un corps invalide et une route inconnue', async () => {

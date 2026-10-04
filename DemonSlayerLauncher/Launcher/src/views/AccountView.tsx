@@ -2,11 +2,12 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { Avatar } from '../components/Avatar';
 import { Button, Field, FormAlert } from '../components/Form';
-import { Icon } from '../components/Icons';
+import { IconTile } from '../components/IconTile';
 import { useToast } from '../components/Toasts';
 import { ROLE_LABELS, errorMessage, isLauncherError, type AccountSession } from '../models/types';
 import { userService } from '../services/userService';
 import { StrengthMeter, validatePassword } from './auth/RegisterForm';
+import { accentStyle } from './navigation';
 
 const monthYear = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
 const fullDate = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' });
@@ -69,9 +70,9 @@ function SessionsCard() {
   };
 
   return (
-    <article className="card card--sessions">
+    <article className="card card--sessions" style={accentStyle('insecte')}>
       <header className="card__head">
-        <Icon name="device" />
+        <IconTile name="device" />
         <h2>Appareils connectés</h2>
       </header>
       {sessions === null ? (
@@ -148,9 +149,9 @@ function PasswordCard() {
   };
 
   return (
-    <article className="card">
+    <article className="card" style={accentStyle('tonnerre')}>
       <header className="card__head">
-        <Icon name="lock" />
+        <IconTile name="lock" />
         <h2>Mot de passe</h2>
       </header>
       <form onSubmit={submit} noValidate>
@@ -223,9 +224,9 @@ export function AccountView() {
       </header>
 
       <div className="account__grid">
-        <article className="card">
+        <article className="card" style={accentStyle('eau')}>
           <header className="card__head">
-            <Icon name="account" />
+            <IconTile name="account" />
             <h2>Informations</h2>
           </header>
           <dl className="facts">

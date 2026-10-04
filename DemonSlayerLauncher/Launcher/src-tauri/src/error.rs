@@ -12,7 +12,7 @@ pub enum LauncherError {
         message: String,
         details: Option<Value>,
     },
-    #[error("Impossible de joindre le serveur Demon Slayer RP. Vérifiez votre connexion internet.")]
+    #[error("Impossible de joindre le serveur NDR | Demon Slayer. Vérifiez votre connexion internet.")]
     Network(String),
     #[error("Votre session a expiré. Veuillez vous reconnecter.")]
     NotAuthenticated,

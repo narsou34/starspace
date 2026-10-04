@@ -1,6 +1,6 @@
-# Demon Slayer RP — Launcher
+# NDR | Demon Slayer — Launcher
 
-Launcher Windows officiel du serveur **Demon Slayer RP** sur nanos world :
+Launcher Windows officiel du serveur **NDR | Demon Slayer** sur nanos world :
 compte joueur, whitelist, personnages, tickets, actualités, statut serveur et bouton **JOUER**.
 
 | Dossier | Contenu |

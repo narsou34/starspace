@@ -1,6 +1,6 @@
-# Demon Slayer RP — Architecture technique
+# NDR | Demon Slayer — Architecture technique
 
-> Launcher Windows officiel du serveur **Demon Slayer RP** (nanos world).
+> Launcher Windows officiel du serveur **NDR | Demon Slayer** (nanos world).
 > Ce document décrit l'architecture **complète** visée ; le développement se fait par phases
 > (voir [ROADMAP](#10-feuille-de-route)). Seule la **Phase 1** est implémentée à ce stade.
 
@@ -11,7 +11,7 @@
 ```
 ┌──────────────────────────── PC du joueur (Windows) ────────────────────────────┐
 │                                                                                │
-│   Demon Slayer RP.exe  (Tauri 2)                                               │
+│   NDR - Demon Slayer.exe  (Tauri 2)                                               │
 │   ┌──────────────────────────────┐   invoke()   ┌──────────────────────────┐   │
 │   │ Interface  React + TypeScript│ ───────────► │ Cœur Rust                │   │
 │   │ (WebView2, aucun accès réseau│ ◄─────────── │ • client HTTPS (reqwest) │   │

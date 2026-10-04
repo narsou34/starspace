@@ -10,6 +10,7 @@ import './styles/controls.css';
 import './styles/auth.css';
 import './styles/shell.css';
 import './styles/pages.css';
+import './styles/color.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

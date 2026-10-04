@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Demon Slayer RP",
+  "productName": "NDR - Demon Slayer",
   "version": "0.1.0",
-  "mainBinaryName": "Demon Slayer RP",
+  "mainBinaryName": "NDR - Demon Slayer",
   "identifier": "com.demonslayerrp.launcher",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -15,7 +15,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Demon Slayer RP",
+        "title": "NDR | Demon Slayer",
         "width": 1280,
         "height": 760,
         "minWidth": 1100,
@@ -36,10 +36,10 @@
     "targets": [
       "nsis"
     ],
-    "publisher": "Demon Slayer RP",
+    "publisher": "NDR",
     "category": "Game",
-    "shortDescription": "Launcher officiel Demon Slayer RP",
-    "longDescription": "Launcher officiel du serveur Demon Slayer RP sur nanos world.",
+    "shortDescription": "Launcher officiel NDR | Demon Slayer",
+    "longDescription": "Launcher officiel du serveur NDR | Demon Slayer sur nanos world.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

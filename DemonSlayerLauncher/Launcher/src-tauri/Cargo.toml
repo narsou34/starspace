@@ -1,8 +1,8 @@
 [package]
 name = "dsrp-launcher"
 version = "0.1.0"
-description = "Launcher officiel Demon Slayer RP (nanos world)"
-authors = ["Demon Slayer RP"]
+description = "Launcher officiel NDR | Demon Slayer (nanos world)"
+authors = ["NDR | Demon Slayer"]
 edition = "2021"
 rust-version = "1.77"
 

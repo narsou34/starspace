@@ -27,14 +27,16 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
           <Emblem size={58} />
           <div>
             <h1>
-              DEMON SLAYER <em>RP</em>
+              <em>NDR</em>
+              <span className="brand-sep">|</span>
+              DEMON SLAYER
             </h1>
             <p>Serveur roleplay · nanos world</p>
           </div>
         </div>
 
         <div className="auth__welcome">
-          <h2>{mode === 'register' ? 'Rejoignez le Corps' : 'Bienvenue sur Demon Slayer RP'}</h2>
+          <h2>{mode === 'register' ? 'Rejoignez le Corps' : 'Bienvenue sur NDR | Demon Slayer'}</h2>
           <p>
             {mode === 'register'
               ? 'Créez votre compte pour postuler à la whitelist et préparer votre personnage.'

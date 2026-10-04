@@ -1,4 +1,4 @@
-/** Emblème Demon Slayer RP : lune pourpre et lame (création originale). */
+/** Emblème NDR | Demon Slayer : lune pourpre et lame (création originale). */
 export function Emblem({ size = 40, className }: { size?: number; className?: string }) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 1024 1024" aria-hidden="true">

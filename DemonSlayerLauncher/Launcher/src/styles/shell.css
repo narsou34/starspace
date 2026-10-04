@@ -33,8 +33,8 @@
   display: block;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.14em;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
   white-space: nowrap;
 }
 

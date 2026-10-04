@@ -1,12 +1,14 @@
 import { VerticalKanji } from '../components/VerticalKanji';
-import type { NavItem } from './navigation';
+import { BREATHS, accentStyle, type NavItem } from './navigation';
 
 /** Section prévue dans une phase ultérieure : présentée clairement comme telle. */
 export function ComingSoonView({ item }: { item: NavItem }) {
   return (
-    <section className="soon">
+    <section className="soon" style={accentStyle(item.breath)}>
       <VerticalKanji text={item.kanji} className="soon__kanji" />
-      <p className="eyebrow">Phase {item.phase} · en préparation</p>
+      <p className="soon__breath">
+        {BREATHS[item.breath].title} · Phase {item.phase}
+      </p>
       <h1 className="page-title">{item.label}</h1>
       <p className="soon__text">{item.description}</p>
       <div className="soon__seal">

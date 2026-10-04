@@ -1,0 +1,514 @@
+/* ═══════════════════════════════════════════════════════════
+   Couleurs des Respirations
+   Chaque fonctionnalité définit --accent / --accent-2
+   (voir BREATHS dans views/navigation.ts).
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --accent: var(--crimson-hi);
+  --accent-2: var(--ember);
+  --flame: linear-gradient(135deg, #ff3a4f 0%, #e3152f 38%, #ff6a2b 100%);
+}
+
+/* ── Pastilles d'icône ── */
+.itile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  transition:
+    background 0.25s,
+    color 0.25s,
+    box-shadow 0.25s,
+    border-color 0.25s,
+    transform 0.25s var(--ease);
+}
+
+.itile--sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+.itile--md {
+  width: 36px;
+  height: 36px;
+}
+.itile--lg {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow:
+    0 10px 24px -8px color-mix(in srgb, var(--accent) 80%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ── Barre latérale colorée ── */
+.nav__item {
+  height: 44px;
+  gap: 12px;
+  padding: 0 10px;
+}
+
+.nav__item:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.nav__item:hover .itile,
+.nav__item.is-active .itile {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 18px -6px var(--accent);
+}
+
+.nav__item:hover .itile {
+  transform: scale(1.06);
+}
+
+.nav__item.is-active {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 24%, transparent), transparent 90%);
+}
+
+.nav__item.is-active::before {
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+}
+
+.nav__item.is-active .nav__kanji,
+.nav__item:hover .nav__kanji {
+  color: var(--accent-2);
+}
+
+.nav__soon {
+  color: color-mix(in srgb, var(--accent-2) 85%, white);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.usercard {
+  background: linear-gradient(135deg, rgba(196, 22, 42, 0.16), rgba(29, 42, 90, 0.25));
+  border-color: rgba(239, 51, 73, 0.22);
+}
+
+/* ── Boutons ── */
+.btn--primary {
+  background: var(--flame);
+  background-size: 160% 100%;
+  background-position: 0 0;
+  transition:
+    transform 0.2s var(--ease),
+    box-shadow 0.25s var(--ease),
+    background-position 0.5s var(--ease);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-position: 100% 0;
+}
+
+.btn--discord,
+.btn--discord-cta {
+  --accent: #5865f2;
+  --accent-2: #8a94ff;
+}
+
+.btn--steam {
+  --accent: #1a9fff;
+  --accent-2: #66c0f4;
+}
+
+.btn--social {
+  color: color-mix(in srgb, var(--accent-2) 70%, white);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), rgba(10, 11, 18, 0.4));
+}
+
+.btn--social:disabled {
+  opacity: 0.8;
+}
+
+.btn--social small {
+  color: #fff;
+  border: 0;
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.btn--discord-cta {
+  color: #fff;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), #404eed);
+  box-shadow: 0 10px 28px -10px var(--accent);
+}
+
+.btn--discord-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px -10px var(--accent);
+}
+
+.btn--danger {
+  border-radius: 8px;
+}
+
+/* ── Onglets et champs ── */
+.tabs__ink {
+  background: linear-gradient(90deg, transparent, #ff3a4f 25%, #ff8a3d 70%, transparent);
+  height: 3px;
+  border-radius: 3px;
+}
+
+.field__line {
+  background: linear-gradient(90deg, transparent, #ff3a4f, #ff8a3d, transparent);
+}
+
+.checkbox input:checked + .checkbox__box {
+  background: var(--flame);
+  border-color: transparent;
+}
+
+/* ── Statuts ── */
+.home__status .status-dot--online {
+  color: #b9f5d3;
+  border-color: rgba(79, 209, 139, 0.45);
+  background: linear-gradient(135deg, rgba(79, 209, 139, 0.18), rgba(5, 5, 8, 0.6));
+}
+
+.home__status .status-dot--pending {
+  color: #ffe2a6;
+  border-color: rgba(232, 176, 74, 0.4);
+  background: linear-gradient(135deg, rgba(232, 176, 74, 0.15), rgba(5, 5, 8, 0.6));
+}
+
+.home__status .status-dot--pending i {
+  background: var(--warn);
+}
+
+/* ── Accueil : cartes de fonctionnalités ── */
+.home {
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+.home__bottom {
+  margin-top: auto;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 860px;
+}
+
+.feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px 16px 18px;
+  text-align: left;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--accent) 26%, rgba(10, 11, 18, 0.9)) 0%,
+    rgba(10, 11, 18, 0.78) 65%
+  );
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  backdrop-filter: blur(10px);
+  animation: rise 0.5s var(--ease) both;
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.25s var(--ease),
+    border-color 0.25s;
+}
+
+.feature:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.feature:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.feature:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+/* Halo coloré dans le coin */
+.feature::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -50px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent-2) 45%, transparent), transparent 70%);
+  opacity: 0.55;
+  transition: opacity 0.3s;
+}
+
+/* Trait coloré en bas */
+.feature::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), transparent);
+  transform: scaleX(0.35);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 18px 40px -16px var(--accent);
+}
+
+.feature:hover::before {
+  opacity: 1;
+}
+
+.feature:hover::after {
+  transform: scaleX(1);
+}
+
+.feature__top {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.feature strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.feature small {
+  max-width: 78%;
+  font-size: 11.5px;
+  color: var(--text-soft);
+  opacity: 0.8;
+}
+
+.feature__badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #fff;
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.feature__arrow {
+  font-size: 18px;
+  color: var(--accent-2);
+  transition: transform 0.25s var(--ease);
+}
+
+.feature:hover .feature__arrow {
+  transform: translateX(4px);
+}
+
+.feature__kanji {
+  position: absolute;
+  right: 12px;
+  top: 64px;
+  z-index: -1;
+  font-family: var(--font-jp);
+  font-size: 26px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+/* ── Parcours coloré ── */
+.journey__title {
+  background: linear-gradient(90deg, var(--gold-hi), #ff8a3d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.journey__num {
+  color: var(--accent-2);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.journey li.is-done .journey__num {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 16px -6px var(--accent);
+}
+
+.journey li button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* ── Bouton JOUER : flamme vivante ── */
+.play {
+  background: var(--flame);
+  background-size: 200% 100%;
+  animation: flame-shift 6s ease-in-out infinite;
+  box-shadow:
+    0 20px 60px -16px rgba(255, 70, 50, 0.95),
+    0 0 0 1px rgba(255, 180, 120, 0.25) inset;
+}
+
+.play__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.play__label svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes flame-shift {
+  0%,
+  100% {
+    background-position: 0% 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+}
+
+/* ── Cartes du compte ── */
+.card__head {
+  color: var(--accent);
+}
+
+.card::before,
+.card::after {
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.card[style] {
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--accent) 12%, rgba(10, 11, 18, 0.72)) 0%,
+    rgba(10, 11, 18, 0.7) 45%
+  );
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.account__banner {
+  background:
+    linear-gradient(100deg, rgba(8, 9, 15, 0.9) 25%, rgba(196, 22, 42, 0.35) 70%, rgba(255, 106, 43, 0.3)),
+    var(--glass);
+  border-color: rgba(239, 51, 73, 0.3);
+}
+
+.sessions li.is-current {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, rgba(5, 5, 8, 0.4));
+}
+
+.tag--crimson {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+/* ── Pages « bientôt » aux couleurs de la section ── */
+.soon__breath {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.soon .page-title {
+  text-shadow: 0 0 50px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.soon__kanji {
+  color: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.soon__seal span {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 30px -10px var(--accent);
+}
+
+/* ── Notifications ── */
+.toast--success .toast__mark {
+  background: linear-gradient(180deg, #2fd879, #b5f76b);
+}
+.toast--error .toast__mark {
+  background: linear-gradient(180deg, #ff3a4f, #ff8a3d);
+}
+.toast--info .toast__mark {
+  background: linear-gradient(180deg, #ffc21a, #ff8a3d);
+}
+
+/* ── Logo « NDR | DEMON SLAYER » ── */
+.titlebar__brand b {
+  color: var(--crimson-hi);
+  font-weight: 700;
+}
+
+.boot__title em,
+.sidebar__brand strong em,
+.auth__brand h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, #ff3a4f, #ff8a3d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-sep {
+  margin: 0 0.35em;
+  color: var(--gold);
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.home__title {
+  align-items: center;
+}
+
+.home__title em {
+  background: linear-gradient(135deg, #ff3a4f 10%, #ff8a3d 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 28px rgba(239, 51, 73, 0.55));
+}
+
+.home__sep {
+  width: 3px;
+  height: 64px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--gold-hi), #ff8a3d);
+  box-shadow: 0 0 18px rgba(255, 138, 61, 0.6);
+}

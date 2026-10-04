@@ -72,10 +72,10 @@ export function LoginForm({ notice, onForgot }: { notice: string | null; onForgo
         <span>ou</span>
       </div>
       <div className="social">
-        <Button type="button" variant="social" disabled title="Connexion Discord — bientôt disponible">
+        <Button type="button" variant="social" className="btn--discord" disabled title="Connexion Discord — bientôt disponible">
           <Icon name="discord" /> Discord <small>bientôt</small>
         </Button>
-        <Button type="button" variant="social" disabled title="Connexion Steam — bientôt disponible">
+        <Button type="button" variant="social" className="btn--steam" disabled title="Connexion Steam — bientôt disponible">
           <Icon name="shield" /> Steam <small>bientôt</small>
         </Button>
       </div>
