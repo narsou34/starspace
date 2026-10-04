@@ -56,6 +56,11 @@ end
 
 local function refreshSpeed(character, now)
     if not (character and character:IsValid()) then return end
+    -- Immobilisé (prison d'eau...) : la vitesse reste nulle jusqu'à la libération
+    if DS.Status and DS.Status.IsRooted(character) then
+        character:SetSpeedMultiplier(0)
+        return
+    end
     local multiplier = 1
     local session = sessionOf(character)
     if session then
@@ -243,6 +248,20 @@ function Abilities.Use(session, slot)
     local tech = DS.Catalog.GetTechnique(state.kind, state.setId, slot)
     if not tech then return refuse(session, slot, "aucune technique a cet emplacement", false) end
 
+    -- Prérequis (vérifiés uniquement côté serveur)
+    local requirements = tech.Requirements
+    if requirements then
+        if requirements.Level and DS.Factions.GetLevel(session) < requirements.Level then
+            return refuse(session, slot, tech.Name .. " : niveau " .. requirements.Level .. " requis.", true)
+        end
+        if requirements.Permission and not session:HasPermission(requirements.Permission) then
+            return refuse(session, slot, tech.Name .. " : technique non debloquee.", true)
+        end
+    end
+    if Abilities.IsBusy(session) then
+        return refuse(session, slot, "technique deja en cours", false)
+    end
+
     local caster = session:GetCharacter()
     if not (caster and caster:IsValid()) then
         return refuse(session, slot, "Vous n'avez pas de personnage.", true)
@@ -266,6 +285,15 @@ function Abilities.Use(session, slot)
     cooldowns[slot] = now + tech.CooldownMs
     session:Send("SkillCooldown", slot, tech.CooldownMs)
 
+    if tech.Script then
+        -- Technique scriptée : chronologie complète gérée par le moteur
+        local ok, err = DS.Techniques.Run(session, caster, tech)
+        if not ok then
+            Log:Error("Technique scriptee '%s' en erreur : %s", tech.Script, tostring(err))
+            return false, "erreur interne"
+        end
+        return true, 0
+    end
     local hits = execute(session, caster, tech, now)
     return true, hits
 end
@@ -297,6 +325,37 @@ local function onTick(now)
     for character in pairs(dummies) do
         if not character:IsValid() then dummies[character] = nil end
     end
+end
+
+-- ===========================================================================
+-- API utilisée par le moteur de techniques scriptées
+-- ===========================================================================
+
+Abilities.SessionOf = sessionOf
+Abilities.ForwardOf = forwardOf
+Abilities.IsEnemy = isEnemy
+Abilities.DamageMultiplier = damageMultiplier
+
+--- Une technique scriptée bloquante (préparation d'un ultime...) est-elle en cours ?
+function Abilities.IsBusy(session)
+    return (session.data.busyUntil or 0) > Utils.NowMs()
+end
+
+function Abilities.ApplySlow(target, multiplier, durationMs)
+    local now = Utils.NowMs()
+    slowed[target] = { multiplier = multiplier, untilMs = now + durationMs }
+    refreshSpeed(target, now)
+end
+
+function Abilities.ApplyBuff(session, buff)
+    local caster = session:GetCharacter()
+    if caster and caster:IsValid() then
+        applyBuff(session, caster, buff, Utils.NowMs())
+    end
+end
+
+function Abilities.RefreshSpeed(character)
+    refreshSpeed(character, Utils.NowMs())
 end
 
 -- ===========================================================================
@@ -364,6 +423,7 @@ function Abilities:Init()
     local function reset(session)
         session.data.cooldowns = {}
         session.data.buff = nil
+        session.data.busyUntil = 0
         refreshSpeed(session:GetCharacter(), Utils.NowMs())
     end
     DS.Bus.On("RP:FactionChanged", reset)

@@ -23,29 +23,8 @@ local THROW2 = "nanos-world::A_Mannequin_Throw_02"
 
 Config.BreathingStyles = {
 
-    eau = {
-        Name = "Souffle de l'Eau",
-        Description = "Style fluide et adaptable, enseigne par Sakonji Urokodaki.",
-        Color = "cyan",
-        BlockRegenMs = 2000,
-        Techniques = {
-            { Form = 1, Name = "Tranchant de la surface de l'eau", Description = "Coup horizontal net.",
-              Damage = 22, Cost = 12, CooldownMs = 2500, Range = 350, Angle = 70,
-              Effect = "nanos-world::P_FXVariety_WaterBallHit", Sound = "nanos-world::A_Water_Impact_MS" },
-            { Form = 2, Name = "Roue a eau", Description = "Rotation verticale autour de soi.",
-              Shape = "circle", Range = 300, Damage = 20, Cost = 15, CooldownMs = 4000, Knockback = 400,
-              Animation = KUNFU, AnimationSlot = "FullBody", Effect = "nanos-world::P_Explosion_Water", EffectOffset = 0 },
-            { Form = 4, Name = "Maree frappante", Description = "Enchainement de coups en avancant.",
-              Shape = "dash", Range = 600, Width = 220, Dash = 1200, Damage = 26, Cost = 20, CooldownMs = 5000,
-              Effect = "nanos-world::P_FXVariety_WaterBall" },
-            { Form = 8, Name = "Bassin de la cascade", Description = "Frappe verticale puissante.",
-              Range = 300, Angle = 50, Damage = 34, Cost = 25, CooldownMs = 7000, Knockback = 600,
-              Animation = PUNCH, Effect = "nanos-world::P_FXVariety_AquaStorm", EffectDuration = 2 },
-            { Form = 10, Name = "Dragon changeant", Description = "Technique ultime : chaque coup gagne en force.",
-              Shape = "dash", Range = 900, Width = 300, Dash = 1600, Damage = 50, Cost = 45, CooldownMs = 20000,
-              Knockback = 700, AnimationSlot = "FullBody", Effect = "nanos-world::P_FXVariety_AquaStorm", EffectDuration = 3 },
-        },
-    },
+    -- Souffle de l'Eau : configuration complète dans Shared/Config/Breathing/Water.lua
+    -- (techniques scriptées : vagues, tourbillon, prison d'eau, tsunami, dragon)
 
     flamme = {
         Name = "Souffle de la Flamme",

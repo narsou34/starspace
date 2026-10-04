@@ -151,7 +151,7 @@ Les mêmes commandes, sans `/` et avec tous les droits : `ds_info`, `ds_players`
   brume, amour, serpent, insecte, fleur, son, bête, soleil — 5 techniques chacun.
 - **6 arts démoniaques** (`Shared/Config/DemonArts.lua`) : sang, temari, fils, glace, biwa, rêve —
   5 compétences + un passif chacun.
-- Touches par défaut **Q E R F X** (la 5e = technique spéciale), modifiables dans
+- Touches par défaut **Q E R F X C** (5 et 6 = techniques spéciales), modifiables dans
   *Paramètres > Touches* ; liste dans `Shared/Config/Abilities.lua`.
 - Ressources : Souffle (pourfendeurs) / Énergie démoniaque (démons), `Config.Resources`.
 - Régénération des démons (`Config.Factions.demons.Regeneration`), bloquée après un coup
@@ -169,6 +169,36 @@ Les mêmes commandes, sans `/` et avec tous les droits : `ds_info`, `ds_players`
 | `/ds_npc`, `/ds_clearnpc` | `admin.npc` | Mannequins d'entraînement |
 
 Faction et souffle/art ne sont pas encore sauvegardés (base de données : Phase 5).
+
+## Souffle de l'Eau (rework : techniques scriptées)
+
+| Touche | Technique | Comportement | Zone de touche |
+| --- | --- | --- | --- |
+| Q | Grande vague | une vague se lève et déferle | boîte qui avance et s'élargit (balayage continu) |
+| E | Tourbillon | vortex qui aspire, soulève, puis explose | cylindre, dégâts par tick + attraction |
+| R | Prison d'eau | sphère lancée ; la cible flotte, emprisonnée, puis la bulle éclate | projectile balayé, immobilisation 3 s |
+| F | Courant fulgurant | élan, vitesse x1.8, traînée d'eau, invulnérable pendant l'élan | sphère qui suit le lanceur |
+| X | Tsunami (niv. 10) | canalisation invulnérable, mur d'eau géant, explosion | mur mobile + explosion finale |
+| C | Dragon changeant (niv. 20) | dragon d'eau ondulant, segmenté, impact massif | sphère balayée le long de la trajectoire |
+
+- **Données** : `Shared/Config/Breathing/Water.lua` (timings, dégâts, zones, effets, sons, caméra).
+  Serveur et clients lisent les mêmes valeurs ; la trajectoire visible est la zone qui touche
+  (`Shared/Systems/TechniqueMath.lua`).
+- **Serveur** : `Server/Systems/Techniques/` — `Engine.lua` (chronologie, limites de touches),
+  `Hitboxes.lua` (sphère, cylindre, boîte orientée, capsule, arc), `Status.lua` (immobilisation,
+  invulnérabilité, toujours rétablies), `Water.lua` (les 6 comportements).
+- **Client** : `Client/Systems/Fx/` — `FxCore.lua` (particules, sons, caméra, chorégraphies,
+  budget de particules) et `Water.lua` (effets multicouches, traînée du katana sur `hand_r`).
+- **Prérequis** vérifiés côté serveur : `Requirements = { Level = 10 }` (et `Permission` possible).
+  `/ds_setlevel [joueur|moi] [niveau]` en attendant la progression (Phase 8).
+- **Performance** : une seule boucle serveur (50 ms) active uniquement pendant une technique ;
+  durée de vie sur chaque particule, plafond `Config.Vfx.MaxActiveParticles`, qualité et
+  distance d'affichage dans `Shared/Config/Vfx.lua`.
+- **Pack d'effets externe** : remplacer les chemins de `WATER_FX` / `WATER_SFX` en haut de
+  `Water.lua` par ceux d'un Asset Pack nanos world (et l'ajouter à `assets_requirements`).
+- **Limites actuelles** : pas de modèle de katana (la traînée suit la main droite), pas de
+  ralenti ni de tremblement de caméra dans l'API (remplacés par FOV / recul de caméra),
+  le projectile ne collisionne pas avec les murs (le serveur n'a pas de Trace).
 
 ## Ajouter un module (exemple)
 

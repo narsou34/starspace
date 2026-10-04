@@ -45,7 +45,7 @@ local function draw(_, width, height)
     local lines = 2 + (set and #set.Techniques or 1)
     local y = height - 60 - lines * 24
 
-    text(faction and faction.Label or state.faction, x, y, 18,
+    text((faction and faction.Label or state.faction) .. "  -  niveau " .. (state.level or 1), x, y, 18,
         state.faction == "demons" and COLORS.demon or COLORS.title)
     y = y + 24
 
@@ -66,9 +66,11 @@ local function draw(_, width, height)
         y = y + 22
         local remaining = DS.Abilities.GetRemaining(slot)
         local key = Config.Abilities.Keys[slot] or tostring(slot)
-        local status = remaining > 0 and string.format("%.1fs", remaining / 1000) or "pret"
+        local locked = tech.RequiredLevel > (state.level or 1)
+        local status = locked and ("niveau " .. tech.RequiredLevel)
+            or (remaining > 0 and string.format("%.1fs", remaining / 1000) or "pret")
         text(string.format("[%s] %s - %s", key, tech.Name, status), x + 10, y, 13,
-            remaining > 0 and COLORS.cooldown or COLORS.ready)
+            (locked or remaining > 0) and COLORS.cooldown or COLORS.ready)
     end
 end
 

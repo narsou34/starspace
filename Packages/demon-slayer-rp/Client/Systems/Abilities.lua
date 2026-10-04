@@ -70,6 +70,10 @@ local function tryUse(slot)
     if not set.Techniques[slot] then return end
     -- Le serveur vérifie aussi : ceci évite seulement d'envoyer des requêtes inutiles
     if Abilities.GetRemaining(slot) > 0 then return end
+    local tech = set.Techniques[slot]
+    if tech.RequiredLevel > (state.level or 1) then
+        return feedback(tech.Name .. " : niveau " .. tech.RequiredLevel .. " requis.")
+    end
     if DS.Net.Send("UseSkill", slot) then
         Log:Info("Technique %s demandee au serveur", slot)
     end
@@ -82,6 +86,7 @@ function Abilities:Init()
         state.setId = payload.setId
         state.resource = payload.resource
         state.resourceMax = payload.resourceMax
+        state.level = payload.level
         state.cooldownUntil = {}
         changed()
     end)
@@ -99,7 +104,7 @@ function Abilities:Init()
 
     for slot, key in ipairs(Config.Abilities.Keys) do
         local binding = "DSRP_Technique_" .. slot
-        local label = slot == #Config.Abilities.Keys and "Demon Slayer RP - Technique speciale"
+        local label = slot >= 5 and ("Demon Slayer RP - Technique speciale " .. (slot - 4))
             or ("Demon Slayer RP - Technique " .. slot)
         Input.Register(binding, key, label)
         Input.Bind(binding, InputEvent.Pressed, function()

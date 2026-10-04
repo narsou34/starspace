@@ -23,6 +23,8 @@ local MODULE_FILES = {
     -- Systèmes de jeu
     "Systems/Abilities.lua",
     "Systems/Effects.lua",
+    "Systems/Fx/FxCore.lua",
+    "Systems/Fx/Water.lua",
 
     -- Interfaces
     "UI/Hud.lua",

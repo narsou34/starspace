@@ -50,6 +50,7 @@ Config.Permissions = {
                 "admin.heal",
                 "admin.npc",
                 "admin.cast",
+                "admin.setlevel",
             },
         },
         superadmin = {

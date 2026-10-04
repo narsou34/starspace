@@ -19,7 +19,7 @@ local Log = Factions.Log
 local function rp(session)
     local state = session.data.rp
     if not state then
-        state = { faction = nil, kind = nil, setId = nil }
+        state = { faction = nil, kind = nil, setId = nil, level = Config.Abilities.StartLevel or 1 }
         session.data.rp = state
     end
     return state
@@ -50,6 +50,7 @@ function Factions.Sync(session)
         setId = state.setId or "",
         resource = resourceId,
         resourceMax = resource and resource.Max or 0,
+        level = state.level or 1,
     })
 end
 
@@ -89,6 +90,22 @@ function Factions.SetAbilitySet(session, setId, by)
     DS.Bus.Emit("RP:SetChanged", session, setId)
     Factions.Sync(session)
     return true
+end
+
+--- Niveau du personnage (progression complète : Phase 8).
+function Factions.SetLevel(session, level, by)
+    level = math.floor(tonumber(level) or 1)
+    if level < 1 or level > (Config.Abilities.MaxLevel or 100) then
+        return false, "niveau entre 1 et " .. (Config.Abilities.MaxLevel or 100)
+    end
+    rp(session).level = level
+    Log:Info("Niveau de %s (#%s) : %s (par %s)", session.name, session.id, level, tostring(by))
+    Factions.Sync(session)
+    return true
+end
+
+function Factions.GetLevel(session)
+    return rp(session).level or 1
 end
 
 function Factions:Init()

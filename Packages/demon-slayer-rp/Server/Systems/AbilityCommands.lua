@@ -134,8 +134,12 @@ function AbilityCommands:Init()
             end
             ctx.Reply("<yellow>" .. set.Name .. "</>")
             for slot, tech in ipairs(set.Techniques) do
-                ctx.Reply(string.format("[%s] %s - %s pts, %ss de recharge",
-                    Config.Abilities.Keys[slot] or slot, tech.Name, tech.Cost, tech.CooldownMs / 1000))
+                local lock = ""
+                if tech.RequiredLevel > DS.Factions.GetLevel(ctx.session) then
+                    lock = " (niveau " .. tech.RequiredLevel .. " requis)"
+                end
+                ctx.Reply(string.format("[%s] %s - %s pts, %ss de recharge%s",
+                    Config.Abilities.Keys[slot] or slot, tech.Name, tech.Cost, tech.CooldownMs / 1000, lock))
             end
             if set.Passive then
                 ctx.Reply("Passif : " .. set.Passive.Name .. " - " .. (set.Passive.Description or ""))
@@ -173,6 +177,23 @@ function AbilityCommands:Init()
             local dummy, spawnErr = DS.Abilities.SpawnDummy(target)
             if not dummy then return ctx.Error(spawnErr) end
             ctx.Reply("Mannequin pret devant " .. target.name .. " (" .. Config.Abilities.TrainingDummyHealth .. " PV).")
+        end,
+    })
+
+    Commands.Register({
+        name = "ds_setlevel",
+        description = "Change le niveau d'un joueur (debloque les techniques avancees)",
+        usage = "[id|nom|moi] [niveau]",
+        permission = "admin.setlevel",
+        minArgs = 2,
+        params = { "joueur", "niveau" },
+        handler = function(ctx, args)
+            local target, err = findTarget(ctx, args[1])
+            if not target then return ctx.Error(err) end
+            local ok, reason = DS.Factions.SetLevel(target, args[2], byWhom(ctx))
+            if not ok then return ctx.Error(reason) end
+            ctx.Reply(target.name .. " est maintenant niveau " .. DS.Factions.GetLevel(target) .. ".")
+            target:Notify("Niveau " .. DS.Factions.GetLevel(target), "success")
         end,
     })
 

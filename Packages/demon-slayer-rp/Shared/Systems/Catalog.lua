@@ -20,7 +20,7 @@ local KINDS = {
     art = { config = "DemonArts", label = "Art demoniaque" },
 }
 local SHAPES = { cone = true, circle = true, line = true, dash = true, self = true }
-local SLOTS = 5
+local SLOTS = 6
 
 local sets = { breathing = {}, art = {} }
 local setOrder = { breathing = {}, art = {} }
@@ -46,10 +46,15 @@ local function buildTechnique(kind, setId, set, index, raw)
         end
     end
 
+    if tech.Script ~= nil and type(tech.Script) ~= "string" then configError(where, "Script doit etre un texte") end
+    if tech.Requirements ~= nil and type(tech.Requirements) ~= "table" then configError(where, "Requirements doit etre une table") end
+
     tech.Kind = kind
     tech.SetId = setId
     tech.Slot = index
-    tech.IsSpecial = (index == SLOTS)
+    tech.Id = kind .. ":" .. setId .. ":" .. index
+    tech.IsSpecial = (index >= 5)
+    tech.RequiredLevel = tech.Requirements and tech.Requirements.Level or 0
     tech.Description = tech.Description or ""
     return tech
 end
@@ -73,6 +78,7 @@ local function buildCatalog()
                 Passive = raw.Passive,
                 BlockRegenMs = raw.BlockRegenMs,
                 BonusVsDemons = raw.BonusVsDemons,
+                BladeTrail = raw.BladeTrail,
                 Techniques = {},
             }
             for index, techRaw in ipairs(raw.Techniques) do

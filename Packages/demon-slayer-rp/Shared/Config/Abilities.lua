@@ -6,8 +6,12 @@
 
 Config.Abilities = {
     -- Touches par défaut (modifiables par chaque joueur dans Paramètres > Touches)
-    -- Emplacement 1..4 = techniques, 5 = technique spéciale
-    Keys = { "Q", "E", "R", "F", "X" },
+    -- Emplacements 1..4 = techniques, 5 = ultime, 6 = technique de haut niveau
+    Keys = { "Q", "E", "R", "F", "X", "C" },
+
+    -- Niveau de départ / maximal (prérequis des techniques avancées)
+    StartLevel = 1,
+    MaxLevel = 100,
 
     -- Délai minimal entre deux techniques quelles qu'elles soient (anti-macro)
     GlobalCooldownMs = 400,

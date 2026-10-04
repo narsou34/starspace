@@ -28,6 +28,7 @@ NetEvents.Define("S2C", "AbilitiesSync", {
                 setId       = { type = "string", maxLength = 32 },  -- "" = aucun
                 resource    = { type = "string", maxLength = 32 },
                 resourceMax = { type = "number", min = 0 },
+                level       = { type = "number", integer = true, min = 0 },
             },
         },
     },
@@ -60,4 +61,38 @@ NetEvents.Define("S2C", "SkillFx", {
         { name = "hits", type = "number", integer = true, min = 0 },
     },
     reliable = false,
+})
+
+-- ===========================================================================
+-- Techniques scriptées (chronologie partagée, voir Shared/Config/Breathing/)
+-- ===========================================================================
+
+-- Serveur -> Clients proches : début d'une technique scriptée.
+-- Origine et direction fixées par le serveur : tous les clients dessinent
+-- exactement la même trajectoire que celle utilisée pour les zones de touche.
+NetEvents.Define("S2C", "TechStart", {
+    args = {
+        { name = "caster", type = "entity" },
+        { name = "kind", type = "string", maxLength = 16 },
+        { name = "setId", type = "string", maxLength = 32 },
+        { name = "slot", type = "number", integer = true, min = 1, max = DS.Catalog.Slots },
+        { name = "x", type = "number" },
+        { name = "y", type = "number" },
+        { name = "z", type = "number" },
+        { name = "yaw", type = "number" },
+        { name = "instance", type = "number", integer = true, min = 0 },
+    },
+})
+
+-- Serveur -> Clients proches : évènement ponctuel d'une technique
+-- (impact, emprisonnement, éclatement, explosion finale...).
+NetEvents.Define("S2C", "TechEvent", {
+    args = {
+        { name = "instance", type = "number", integer = true, min = 0 },
+        { name = "event", type = "string", maxLength = 32 },
+        { name = "x", type = "number" },
+        { name = "y", type = "number" },
+        { name = "z", type = "number" },
+        { name = "target", type = "entity", optional = true },
+    },
 })
