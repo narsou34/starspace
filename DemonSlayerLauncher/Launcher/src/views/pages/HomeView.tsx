@@ -1,6 +1,5 @@
 import type { CSSProperties } from 'react';
 import { useAuth } from '../../auth/AuthContext';
-import { HeroFigure } from '../../components/HeroFigure';
 import { Icon } from '../../components/Icons';
 import { PlayButton } from '../../components/PlayButton';
 import { Chip, Panel, PreviewTag } from '../../components/ui';
@@ -16,8 +15,6 @@ export function HomeView() {
 
   return (
     <div className="home">
-      <HeroFigure className="home__figure" />
-
       <section className="home__hero">
         <p className="kicker reveal" style={{ '--i': 0 } as CSSProperties}>
           Bienvenue, {user?.username} · 鬼殺隊

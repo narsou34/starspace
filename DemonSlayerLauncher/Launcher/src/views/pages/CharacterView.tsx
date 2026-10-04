@@ -1,23 +1,16 @@
 import { useState, type CSSProperties } from 'react';
-import { HeroFigure } from '../../components/HeroFigure';
 import { Icon } from '../../components/Icons';
 import { Chip, Panel, PreviewTag, StatBar } from '../../components/ui';
 import { PREVIEW_CHARACTER } from '../../models/preview';
-import { THEMES } from '../../theme/themes';
 
 export function CharacterView() {
   const c = PREVIEW_CHARACTER;
   const [slot, setSlot] = useState(0);
-  const breath = THEMES[c.breathTheme];
 
   return (
     <div className="character">
-      <div className="character__art">
-        <div className="character__seal" aria-hidden="true">
-          {breath.kanji}
-        </div>
-        <HeroFigure className="character__figure" strength={1.4} />
-      </div>
+      {/* Colonne laissée libre : l’illustration du fond (Kokushibo) apparaît ici */}
+      <div className="character__art" />
 
       <section className="character__info">
         <div className="slots reveal" style={{ '--i': 0 } as CSSProperties}>

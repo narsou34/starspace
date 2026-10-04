@@ -66,6 +66,8 @@ jobs:
       - run: npm ci
       # Typecheck + build de l'interface (requis par generate_context! côté Rust)
       - run: npm run build
+        env:
+          VITE_DEMO_MODE: 'true'
       - name: Tests Rust
         working-directory: DemonSlayerLauncher/Launcher/src-tauri
         run: cargo test
@@ -82,7 +84,11 @@ jobs:
           @{ apiBaseUrl = $env:DSRP_API_URL; requestTimeoutSeconds = 15 } |
             ConvertTo-Json | Set-Content -Encoding utf8 src-tauri/resources/launcher.config.json
 
+      # VITE_DEMO_MODE=true ajoute le bouton « Découvrir en mode aperçu »
+      # (visite sans serveur). À retirer pour la version publique.
       - run: npx tauri build
+        env:
+          VITE_DEMO_MODE: 'true'
 
       - uses: actions/upload-artifact@v4
         with:

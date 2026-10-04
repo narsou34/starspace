@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ComponentType } from 'react';
-import { bridge } from '../api/bridge';
+import { bridge, isDemoMode } from '../api/bridge';
 import { useAuth } from '../auth/AuthContext';
 import { Avatar } from '../components/Avatar';
 import { Emblem } from '../components/Emblem';
@@ -136,6 +136,11 @@ export function Shell({
             </div>
 
             <div className="topbar__actions">
+              {isDemoMode() && (
+                <span className="demo-badge" title="Aucune connexion au serveur : données simulées">
+                  <Icon name="eye" size={14} /> Mode aperçu
+                </span>
+              )}
               <div className="bell" ref={bellRef}>
                 <button
                   type="button"

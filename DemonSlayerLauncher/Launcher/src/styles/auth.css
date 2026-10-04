@@ -177,3 +177,50 @@
   font-size: 1.05rem;
   color: var(--paper-2);
 }
+
+/* ── Mode aperçu ── */
+.demo-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  text-align: left;
+  color: #ffe2a8;
+  border: 1px dashed rgba(255, 200, 110, 0.55);
+  background: rgba(255, 190, 90, 0.08);
+  transition: background 0.25s, transform 0.3s var(--spring);
+}
+
+.demo-btn:hover {
+  background: rgba(255, 190, 90, 0.16);
+  transform: translateY(-2px);
+}
+
+.demo-btn strong {
+  display: block;
+  font-size: 0.88rem;
+}
+
+.demo-btn small {
+  font-size: 0.72rem;
+  color: var(--paper-3);
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2rem;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffe2a8;
+  border: 1px dashed rgba(255, 200, 110, 0.6);
+  background: rgba(255, 190, 90, 0.1);
+}

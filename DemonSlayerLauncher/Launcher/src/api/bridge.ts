@@ -9,6 +9,7 @@
  * un transport HTTP de développement garde les tokens en mémoire uniquement.
  */
 import type { ApiPing, AppInfo, LauncherError, PublicConfig, User } from '../models/types';
+import { createDemoBridge } from './demoBridge';
 import { webBridge } from './webBridge';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -61,4 +62,22 @@ const tauriBridge: LauncherBridge = {
   request: (method, path, body) => nativeInvoke('api_request', { method, path, body: body ?? null }),
 };
 
-export const bridge: LauncherBridge = isTauri ? tauriBridge : webBridge;
+const realBridge: LauncherBridge = isTauri ? tauriBridge : webBridge;
+const demoBridge = createDemoBridge(realBridge);
+let active: LauncherBridge = realBridge;
+
+/** Mode aperçu : uniquement si le build l'autorise (VITE_DEMO_MODE=true) ou en développement. */
+export const DEMO_AVAILABLE = import.meta.env.DEV || import.meta.env.VITE_DEMO_MODE === 'true';
+
+export function setDemoMode(on: boolean): void {
+  active = on && DEMO_AVAILABLE ? demoBridge : realBridge;
+}
+
+export function isDemoMode(): boolean {
+  return active === demoBridge;
+}
+
+/** Point d'entrée unique : délègue au transport actif (réel ou aperçu). */
+export const bridge: LauncherBridge = new Proxy({} as LauncherBridge, {
+  get: (_target, prop) => active[prop as keyof LauncherBridge],
+});

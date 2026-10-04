@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { DEMO_AVAILABLE } from '../../api/bridge';
+import { useAuth } from '../../auth/AuthContext';
 import { Emblem } from '../../components/Emblem';
-import { HeroFigure } from '../../components/HeroFigure';
+import { Icon } from '../../components/Icons';
 import { ApiStatus, useApiPing } from '../../components/ServerPing';
 import type { AppInfo, PublicConfig } from '../../models/types';
 import { LoginForm } from './LoginForm';
@@ -13,6 +15,7 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
   const [mode, setMode] = useState<AuthMode>('login');
   const [notice, setNotice] = useState<string | null>(null);
   const ping = useApiPing(30_000);
+  const { enterDemo } = useAuth();
   const registrationOpen = config?.features.registration ?? true;
 
   const go = (next: AuthMode, message: string | null = null) => {
@@ -70,6 +73,16 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
           {mode === 'reset' && <ResetForm notice={notice} onBack={() => go('forgot')} onDone={(msg) => go('login', msg)} />}
         </div>
 
+        {DEMO_AVAILABLE && (
+          <button type="button" className="demo-btn" onClick={() => void enterDemo()}>
+            <Icon name="eye" size={16} />
+            <span>
+              <strong>Découvrir en mode aperçu</strong>
+              <small>Visite du launcher sans serveur · aucune donnée envoyée</small>
+            </span>
+          </button>
+        )}
+
         <footer className="auth__footer">
           <ApiStatus ping={ping} />
           <span>v{info?.version ?? '—'}</span>
@@ -77,7 +90,6 @@ export function AuthScreen({ info, config }: { info: AppInfo | null; config: Pub
       </section>
 
       <aside className="auth__showcase" aria-hidden="true">
-        <HeroFigure className="auth__figure" />
         <div className="auth__title">
           <p className="kicker">鬼殺隊 · Corps des pourfendeurs</p>
           <h1 className="brandtitle">

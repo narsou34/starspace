@@ -21,9 +21,10 @@
 .server__hero .ring::before {
   content: '';
   position: absolute;
-  inset: 12%;
+  inset: 6%;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent), transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, rgba(8, 12, 28, 0.8)), rgba(8, 12, 28, 0.75) 70%);
+  backdrop-filter: blur(10px);
 }
 
 .server__badges {

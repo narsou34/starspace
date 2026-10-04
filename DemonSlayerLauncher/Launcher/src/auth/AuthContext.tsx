@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
-import { bridge } from '../api/bridge';
+import { bridge, isDemoMode, setDemoMode } from '../api/bridge';
 import type { User } from '../models/types';
 import { isLauncherError } from '../models/types';
 
@@ -12,6 +12,8 @@ interface AuthState {
   logout(): Promise<void>;
   logoutAll(): Promise<void>;
   setUser(user: User): void;
+  /** Ouvre le launcher en mode aperçu (sans serveur). */
+  enterDemo(): Promise<void>;
   /** À appeler quand une requête révèle que la session n'est plus valable. */
   handleError(err: unknown): void;
 }
@@ -46,23 +48,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await bridge.logout();
+    setDemoMode(false);
     setUser(null);
   }, []);
 
   const logoutAll = useCallback(async () => {
     await bridge.logoutAll();
+    setDemoMode(false);
     setUser(null);
+  }, []);
+
+  const enterDemo = useCallback(async () => {
+    setDemoMode(true);
+    if (!isDemoMode()) return;
+    setUser(await bridge.login('Narsou', '', false));
   }, []);
 
   const handleError = useCallback((err: unknown) => {
     if (isLauncherError(err) && (err.code === 'SESSION_EXPIRED' || err.code === 'ACCOUNT_SUSPENDED')) {
+      setDemoMode(false);
       setUser(null);
     }
   }, []);
 
   const value = useMemo(
-    () => ({ user, login, register, restore, logout, logoutAll, setUser, handleError }),
-    [user, login, register, restore, logout, logoutAll, handleError],
+    () => ({ user, login, register, restore, logout, logoutAll, setUser, handleError, enterDemo }),
+    [user, login, register, restore, logout, logoutAll, handleError, enterDemo],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

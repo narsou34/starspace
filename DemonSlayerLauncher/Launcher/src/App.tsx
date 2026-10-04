@@ -4,7 +4,7 @@ import { useAuth } from './auth/AuthContext';
 import { TitleBar } from './components/TitleBar';
 import { useToast } from './components/Toasts';
 import { errorMessage, type AppInfo, type PublicConfig } from './models/types';
-import { Landscape } from './scenery/Landscape';
+import { Backdrop } from './scenery/Backdrop';
 import { useSettings } from './settings/SettingsContext';
 import { themeVars } from './theme/themes';
 import { AuthScreen } from './views/auth/AuthScreen';
@@ -56,14 +56,20 @@ export function App() {
 
   const onViewChange = useCallback((v: ViewId) => setView(v), []);
 
-  // Ambiance : la page choisit thème + décor ; le joueur peut imposer un thème.
-  const page = user && phase === 'ready' ? VIEWS[view] : VIEWS.home;
-  const theme = settings.theme === 'auto' ? page.theme : settings.theme;
-  const scene = phase === 'boot' ? 'lake' : page.scene;
+  // Ambiance : la page choisit thème + illustration ; le joueur peut imposer un thème.
+  // Écrans de démarrage et de connexion : Kokushibo, ambiance Brume.
+  const inApp = Boolean(user) && phase === 'ready';
+  const page = VIEWS[view];
+  const art = inApp ? page.art : 'kokushibo';
+  const focus = inApp ? page.focus : 'right';
+  const pageTheme = inApp ? page.theme : 'mist';
+  const theme = settings.theme === 'auto' ? pageTheme : settings.theme;
+  // Pages dont le contenu occupe toute la largeur : fond assombri pour la lisibilité.
+  const dim = inApp && view !== 'home' && view !== 'character';
 
   return (
     <div className="app" style={themeVars(theme)}>
-      <Landscape theme={theme} scene={scene} />
+      <Backdrop art={art} focus={focus} theme={theme} dim={dim} />
       <TitleBar />
       <div className="app__body">
         {phase === 'boot' ? (
